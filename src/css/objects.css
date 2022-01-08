@@ -1,0 +1,36 @@
+.jk-row,
+.jk-row-05{
+   display: flex;
+   flex-direction: row;
+   justify-content: space-between;
+   align-items: center;
+}
+
+.jk-row-05{
+   column-gap: 0.5rem;
+}
+
+
+.jk-row-05-start{
+   display: flex;
+   flex-direction: row;
+   justify-content: flex-start;
+   align-items: center;
+   column-gap: 0.5rem;
+}
+
+.jk-column,
+.jk-column-05{
+   display: flex;
+   flex-direction: column;
+   justify-content: space-between;
+   align-items: center;
+}
+
+.jk-column-05{
+   column-gap: 0.5rem;
+}
+
+.width-100{
+   width: 100%;
+}

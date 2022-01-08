@@ -1,0 +1,91 @@
+button.btn-icon{
+   background-color: transparent;
+   border: 0;
+   box-shadow: 0 0 2px 1px var(--primary-color-2);
+   padding: 0.5rem;
+   color: var(--primary-color-2);
+   border-radius: 20px;
+   cursor: pointer;
+   display: flex;
+   align-items: center;
+   flex-direction: column;
+   justify-content: center;
+}
+
+button.btn-icon:hover{
+   background-color: var(--primary-color-text);
+   color: var(--primary-color);
+}
+
+
+div.av-select__control--is-focused,
+div.av-select-error__control--is-focused{
+    box-shadow: none;        
+    border-color: #ebebeb;    
+}
+
+div.av-select__control,
+div.av-select-error__control{
+    border: 1px solid var(--primary-color);
+    border-radius: 0;    
+    background-color: var(--primary-color);
+    color: var(--primary-color-text);
+}
+
+div.css-qc6sy-singleValue{
+   color: var(--primary-color-text);
+}
+
+
+div.av-select__control:hover,
+div.av-select__control--is-focused:hover,
+div.av-select-error__control:hover,
+div.av-select-error__control--is-focused:hover{
+    border: 1px solid #707070;
+}
+
+div.av-select__control--is-focused,
+div.av-select-error__control--is-focused{    
+    border: 1px solid #707070;
+}
+
+div.av-select__option{
+   background-color: var(--primary-color-3);
+}
+
+div.av-select__option--is-focused,
+div.av-select-error__option--is-focused{
+    background-color: var(--primary-color-2);
+}
+
+div.av-select__option--is-selected,
+div.av-select-error__option--is-selected{
+    background-color: var(--primary-color-text);
+    color: var(--primary-color-4);
+}
+
+div.av-select__menu{
+   background-color: var(--primary-color-3);
+}
+
+button.btn-action{
+    background-color: var(--primary-color-text);
+    color: var(--primary-color);
+    padding: 0.5rem 1rem;
+    border-radius: 15px;
+    border: 0;
+    cursor: pointer;
+    transition: 0.2s ease-in;
+}
+
+button.btn-action:hover{
+    background-color: var(--primary-color-2);   
+    color: var(--primary-color-text);
+    box-shadow: 1px 1px 2px 1px var(--primary-color-4);
+}
+
+button.btn-action:active{
+    position: relative;
+    top: 2px;
+    left: 2px;
+}

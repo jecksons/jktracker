@@ -1,0 +1,114 @@
+div.main-content{
+   display: flex;
+   flex-direction: column;
+   margin: 0 2.5rem;
+   row-gap: 1.5rem;
+}
+
+div.detail-items{
+   display: grid;
+   grid-template-rows: 1fr;
+   grid-template-columns: 10rem 5rem 6rem repeat(3, 5rem) 8rem;
+   column-gap: 0.5rem;
+   align-items: center;
+}
+
+div.task-item-content{
+   padding: 0.5rem 1rem;   
+}
+
+li.task-item:not(:last-child){
+   border-bottom: 1px solid var(--primary-color-2);
+}
+
+label.header-description{
+   flex: 1;   
+}
+
+section.tasks{   
+   border-radius: 16px;
+   border: 1px solid var(--primary-color-2);
+}
+
+div.tasks-header{
+   padding: 1rem;
+   color: #EBEBEB;
+   font-weight: bold;
+   border-bottom: 1px solid var(--primary-color-2);
+}
+
+section.screen-header{
+   padding: 2rem 0 1rem;
+   border-bottom: 1px solid var(--primary-color-2);        
+   align-items: flex-start;
+}
+
+input.task-description{
+   flex: 1;
+}
+
+div.parent-task-desc{
+   display: flex;
+   flex-direction: row;
+   width: 100%;
+   column-gap: 0.25rem;
+}
+
+div.left-space-desc{
+   padding: 1rem;
+}
+
+li.task-item-child{
+   background-color: var(--primary-color-3);
+}
+
+li.task-item-child:not(:last-child){
+   border-bottom: 1px solid var(--primary-color-2);
+}
+
+
+button.btn-itm-start,
+button.btn-itm-stop{
+   margin: 0;
+   padding: 0.25rem;
+   border-radius: 20px;
+   outline: none;
+   border: 0;
+   display: flex;
+   align-items: center;
+   cursor: pointer;
+   box-shadow: 2px 2px 2px 0 var(--primary-color-4);
+}
+
+
+button.btn-itm-start{
+   background-color: #00FF38;
+}
+
+button.btn-itm-stop{
+   background-color: #FF0000;
+}
+
+
+button.btn-itm-start:active,
+button.btn-itm-stop:active{
+   position: relative;
+   top: 2px;
+   left: 2px;
+}
+
+
+button.btn-add-child{
+   margin: 0;
+   padding: 0.25rem;
+   outline: none;
+   cursor: pointer;
+   border: 1px solid var(--primary-color-text);
+   background-color: var(--primary-color);
+   color: var(--primary-color-text);
+   border-radius: 10px;
+}
+
+button.btn-add-child:hover{
+   background-color: var(--primary-color-2);
+}

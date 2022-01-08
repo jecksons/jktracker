@@ -1,0 +1,115 @@
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+:root{
+	--primary-color: #1B264F; 
+	--primary-color-2: #47527D; 
+	--primary-color-3: #2D3964; 
+	--primary-color-4: #0B1536; 
+	--primary-color-5: #03091F; 
+	--primary-color-text: #FFF;
+}
+
+
+@font-face {
+	font-family: 'ubunturegular';
+	src: url('./fonts/ubuntu-regular-webfont.woff2') format('woff2'),
+		  url('./fonts/ubuntu-regular-webfont.woff') format('woff');
+	font-weight: normal;
+	font-style: normal;
+}
+
+
+@font-face {
+	font-family: 'ubunturegular';
+	src: url('./fonts/ubuntu-light-webfont.woff2') format('woff2'),
+		  url('./fonts/ubuntu-light-webfont.woff') format('woff');
+	font-weight: 300;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'ubunturegular';
+	src: url('./fonts/ubuntu-bold-webfont.woff2') format('woff2'),
+		  url('./fonts/ubuntu-bold-webfont.woff') format('woff');
+	font-weight: bold;
+	font-style: normal;
+
+}
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+	font-family: 'ubunturegular', 'Courier New', Courier, monospace;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+	background-color: var(--primary-color);
+	color: var(--primary-color-text);
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+input,
+button{
+	font-family: 'ubunturegular', 'Courier New', Courier, monospace;
+}
+
+input{
+	color: var(--primary-color-text);
+	background-color: transparent;
+	border: 1px solid transparent;
+	padding: 0.5rem;
+	border-radius: 4px;
+	outline: none;
+}
+
+
+
+input:hover,
+input:focus{
+	background-color: var(--primary-color-3);	
+	border: 1px solid var(--primary-color-2);
+
+}
+
+h1{
+	font-size: 2rem;
+	font-weight: bold;
+}
