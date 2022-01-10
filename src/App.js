@@ -6,6 +6,7 @@ import React, {useState, useMemo, useCallback} from "react";
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import TimeTracking from "./components/time-tracking";
 
+
 function App() {
   return (
     <div className="App">
