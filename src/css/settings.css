@@ -39,11 +39,6 @@
 
 }
 
-*{
-	font-family: 'ubunturegular', 'Courier New', Courier, monospace;
-}
-
-
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -91,6 +86,15 @@ table {
 	border-spacing: 0;
 }
 
+input,
+button,
+h1, h2, h3, h4, h5, h6,
+label,
+strong,
+div,
+a{
+	font-family: 'ubunturegular', 'Courier New', Courier, monospace;
+}
 
 input{
 	color: var(--primary-color-text);
