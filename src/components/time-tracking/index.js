@@ -1,16 +1,18 @@
-import { useCallback, useEffect, useReducer, useState } from "react";
+import { useEffect, useState } from "react";
 import api from "../../services/api";
 import utils from "../../services/utils";
 import AppHeader from "../controls/app-header";
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import './styles.css';
+import SurfaceLoading from "../controls/surface-loading";
 
 
 export default function TimeTracking(props) {
 
    const [weekDate, setWeekDate] = useState(new Date());
    const [qrResult, setQrResult] = useState(null);
+   const [loadingItems, setLoadingItems] = useState(false);
 
 
    useEffect(() => {
@@ -26,6 +28,7 @@ export default function TimeTracking(props) {
             dtRes.period.fromDt = new Date(dtRes.period.from);
             dtRes.period.toDt = new Date(dtRes.period.to);
             setQrResult(dtRes);
+            setLoadingItems(false);
          }
          catch (err) {
             if (!api.isCancel(err)) {
@@ -34,6 +37,7 @@ export default function TimeTracking(props) {
          }
 
       };
+      setLoadingItems(true);
       fetchItm();
       return () => cancelToken.cancel();
    }, [weekDate]);
@@ -56,35 +60,41 @@ export default function TimeTracking(props) {
                </div>
             </section>
             {
-               qrResult && (
-                     <div className="jk-column-05 width-100 tracking-data">
-                        <section className="jk-row-05 width-100 week-stats">
-                           <label>{`${utils.getDateStr(qrResult.period.fromDt)} to ${utils.getDateStr(qrResult.period.toDt)}`}</label>
-                           <label>{`Total hours: ${utils.formatDecimalHours(qrResult.totalHours)}`}</label>
-                        </section>
-                        <ol className="days-list">
-                           {qrResult.days.map((itm) => <li key={itm.date} className='card-day'>
-                              <div className="card-day-header">
-                                 <h2>{utils.getDayName(itm.date)}</h2>
-                                 <h4>{utils.getDayMonth(itm.date)}</h4>
-                              </div>
-                              <ul className="task-items">
-                                 {
-                                    itm.tasks.map((tsk) => <li className="card-day-task-item" key={tsk.id}>
-                                          <p>{tsk.description}</p>
-                                          <h4>{utils.formatDecimalHours(tsk.hours)}</h4>
-                                    </li>)
-                                 }
-                              </ul>
-                              <div className="card-day-footer">
-                                 <h3>{utils.formatDecimalHours(itm.totalHours)}</h3>
-                              </div>
-                           </li>)}
-                        </ol>
-
-                     </div>
+               loadingItems ? 
+                  <div className="results-loading">
+                     <SurfaceLoading />                     
+                  </div> : 
+                  (
+                     qrResult && (
+                        <div className="jk-column-05 width-100 tracking-data">
+                           <section className="jk-row-05 width-100 week-stats">
+                              <label>{`${utils.getDateStr(qrResult.period.fromDt)} to ${utils.getDateStr(qrResult.period.toDt)}`}</label>
+                              <label>{`Total hours: ${utils.formatDecimalHours(qrResult.totalHours)}`}</label>
+                           </section>
+                           <ol className="days-list">
+                              {qrResult.days.map((itm) => <li key={itm.date} className='card-day'>
+                                 <div className="card-day-header">
+                                    <h2>{utils.getDayName(itm.date)}</h2>
+                                    <h4>{utils.getDayMonth(itm.date)}</h4>
+                                 </div>
+                                 <ul className="task-items">
+                                    {
+                                       itm.tasks.map((tsk) => <li className="card-day-task-item" key={tsk.id}>
+                                             <p>{tsk.description}</p>
+                                             <h4>{utils.formatDecimalHours(tsk.hours)}</h4>
+                                       </li>)
+                                    }
+                                 </ul>
+                                 <div className="card-day-footer">
+                                    <h3>{utils.formatDecimalHours(itm.totalHours)}</h3>
+                                 </div>
+                              </li>)}
+                           </ol>
+   
+                        </div>
+                     )
                   )
-            }            
+            }          
          </div>
       </div>
    );

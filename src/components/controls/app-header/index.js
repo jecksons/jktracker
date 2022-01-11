@@ -4,7 +4,7 @@ import logo from '../../images/logo.png';
 export default function AppHeader(props) {
 
    return <header className='app-header'>
-      <nav className="jk-row-05-start menu-start">
+      <nav className="menu-start">
          <a href="/">Tasks</a>
          <a href="/tracking">Time tracking</a>
       </nav>

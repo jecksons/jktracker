@@ -68,14 +68,18 @@ div.av-select__menu{
    background-color: var(--primary-color-3);
 }
 
-button.btn-action{
-    background-color: var(--primary-color-text);
-    color: var(--primary-color);
+button.btn-action,
+button.btn-link{
     padding: 0.5rem 1rem;
     border-radius: 15px;
     border: 0;
     cursor: pointer;
     transition: 0.2s ease-in;
+}
+
+button.btn-action{
+    background-color: var(--primary-color-text);
+    color: var(--primary-color);
 }
 
 button.btn-action:hover{
@@ -88,4 +92,41 @@ button.btn-action:active{
     position: relative;
     top: 2px;
     left: 2px;
+}
+
+button.btn-link{
+    background-color: transparent;    
+    color: var(--primary-color-text);
+    font-weight: bold;
+}
+
+button.btn-link:hover{
+    background-color: var(--primary-color-2);   
+    color: var(--primary-color-text);
+}
+
+input.inp-form{
+    border-bottom: 1px solid var(--primary-color-2);
+    border-radius: 0;
+}
+
+
+input.inp-form:focus,
+input.inp-form:active,
+input.inp-form:hover{
+    border-radius: 6px;
+}
+
+label.inp-form{
+    font-size: 0.75rem;
+
+}
+
+p.error-message{
+    color: #FF0000;
+    text-align: center;
+}
+
+label.lb-75{
+    font-size: 0.75rem;
 }

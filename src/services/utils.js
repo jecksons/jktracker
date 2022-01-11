@@ -47,11 +47,15 @@ class Utils {
         history.replace(`/unknown-error/?requestedURL=${history.location ? history.location.pathname :  ''}&message=${this.getHTTPError(err)}`);
    }   
 
-   formatFloatAsTime(value) {      
+   formatFloatAsTime(value, includeSeconds = true) {      
       const hrs = Math.trunc(value * 24);
       const mins = Math.trunc((value -(hrs / 24)) * 24 * 60);
       const secs = Math.trunc( (value - (hrs/ 24 ) - (mins / 60 / 24 ) ) * 24 * 60 * 60);
-      return hrs.toString().padStart(2, '0') + ':' + mins.toString().padStart(2, '0') + ':' + secs.toString().padStart(2, '0');
+      if (includeSeconds) {
+        return hrs.toString().padStart(2, '0') + ':' + mins.toString().padStart(2, '0') + ':' + secs.toString().padStart(2, '0');
+      } else {
+        return hrs.toString().padStart(2, '0') + ':' + mins.toString().padStart(2, '0');
+      }      
    }
 
     formatDecimalHours(value) {

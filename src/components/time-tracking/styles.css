@@ -35,6 +35,11 @@ div.tracking-data::after{
    height: 8rem;
 }
 
+div.results-loading{
+   flex: 1;
+   display: flex;
+}
+
 li.card-day{
    display: flex;
    flex-direction: column;

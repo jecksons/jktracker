@@ -2,7 +2,7 @@ import Home from "./components/home";
 import './css/settings.css';
 import './css/objects.css';
 import './css/components.css';
-import React, {useState, useMemo, useCallback} from "react";
+import React  from "react";
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import TimeTracking from "./components/time-tracking";
 

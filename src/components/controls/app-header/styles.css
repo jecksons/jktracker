@@ -17,6 +17,10 @@ img.logo{
 
 nav.menu-start{
    column-gap: 1rem;
+   display: flex;
+   flex-direction: row;
+   justify-content: space-between;
+   align-items: center;
 }
 
 nav.menu-start a{
@@ -28,4 +32,21 @@ nav.menu-start a{
 
 nav.menu-start a:hover{
    border: 1px solid var(--primary-color-text);
+}
+
+
+@media screen  and (max-width: 600px) {
+   img.logo{
+      display: none;
+      width: 0;
+   }
+
+   header.app-header{
+      justify-content: center;
+   }
+
+   nav.menu-start{
+      width: 100%;
+      justify-content: space-around;
+   }   
 }

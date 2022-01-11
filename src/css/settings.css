@@ -111,7 +111,6 @@ input:hover,
 input:focus{
 	background-color: var(--primary-color-3);	
 	border: 1px solid var(--primary-color-2);
-
 }
 
 h1{
