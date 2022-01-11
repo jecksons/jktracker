@@ -2,10 +2,44 @@ import { useEffect, useState } from "react";
 import api from "../../services/api";
 import utils from "../../services/utils";
 import AppHeader from "../controls/app-header";
+import {AiOutlineDown, AiOutlineUp} from 'react-icons/ai';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import './styles.css';
 import SurfaceLoading from "../controls/surface-loading";
+
+
+function DayTracked({dayData}) {
+   const [isExpanded, setIsExpanded] = useState(false);
+
+   return (
+      <li  className='card-day'>
+      <div className="card-day-header">
+         <h2>{utils.getDayName(dayData.date)}</h2>
+         <h4>{utils.getDayMonth(dayData.date)}</h4>
+         <button className="btn-icon btn-expand-day" onClick={() => setIsExpanded(p => !p)} >
+         {isExpanded ? 
+            <AiOutlineUp size={16} />  : 
+               <AiOutlineDown size={16} /> 
+               
+            }
+         </button>
+      </div>
+      <ul className={`task-items${isExpanded ? '' : '-collapsed'}`} >
+         {
+            dayData.tasks.map((tsk) => <li className="card-day-task-item" key={tsk.id}>
+                  <p>{tsk.description}</p>
+                  <h4>{utils.formatDecimalHours(tsk.hours)}</h4>
+            </li>)
+         }
+      </ul>      
+      <div className="card-day-footer">
+         <h3>{utils.formatDecimalHours(dayData.totalHours)}</h3>
+      </div>
+   </li>
+   )
+
+}
 
 
 export default function TimeTracking(props) {
@@ -46,7 +80,7 @@ export default function TimeTracking(props) {
 
    return (
       <div className="parent-body-track" >
-         <AppHeader />         
+         <AppHeader selOption={'tracking'}  />         
          <div className="main-content-track">
             <section className="jk-row-05 header-track">
                <h1>Time Tracking</h1>
@@ -54,6 +88,7 @@ export default function TimeTracking(props) {
                   <label>Selected week</label>
                   <DatePicker
                      id="week-select"
+                     className='inp-form'
                      selected={weekDate}
                      onChange={(dt) => setWeekDate(dt)}
                   />
@@ -72,25 +107,8 @@ export default function TimeTracking(props) {
                               <label>{`Total hours: ${utils.formatDecimalHours(qrResult.totalHours)}`}</label>
                            </section>
                            <ol className="days-list">
-                              {qrResult.days.map((itm) => <li key={itm.date} className='card-day'>
-                                 <div className="card-day-header">
-                                    <h2>{utils.getDayName(itm.date)}</h2>
-                                    <h4>{utils.getDayMonth(itm.date)}</h4>
-                                 </div>
-                                 <ul className="task-items">
-                                    {
-                                       itm.tasks.map((tsk) => <li className="card-day-task-item" key={tsk.id}>
-                                             <p>{tsk.description}</p>
-                                             <h4>{utils.formatDecimalHours(tsk.hours)}</h4>
-                                       </li>)
-                                    }
-                                 </ul>
-                                 <div className="card-day-footer">
-                                    <h3>{utils.formatDecimalHours(itm.totalHours)}</h3>
-                                 </div>
-                              </li>)}
-                           </ol>
-   
+                              {qrResult.days.map((itm) => <DayTracked key={itm.date}  dayData={itm} /> )}
+                           </ol>   
                         </div>
                      )
                   )

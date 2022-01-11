@@ -6,10 +6,6 @@ header.app-header{
    justify-content: space-between;
 }
 
-header.app-header a{
-   text-decoration: none;
-   color: #FFF;
-}
 
 img.logo{
    height: 2.25rem;
@@ -23,14 +19,22 @@ nav.menu-start{
    align-items: center;
 }
 
-nav.menu-start a{
+a.nav-option-sel,
+a.nav-option{
    padding: 0.5rem 1rem;
    border-radius: 15px;
    font-weight: bold;
    border: 1px solid var(--primary-color);
+   text-decoration: none;
+   color: #FFF;
 }
 
-nav.menu-start a:hover{
+a.nav-option-sel{
+   border: 1px solid var(--primary-color-3);
+}
+
+a.nav-option-sel:hover,
+a.nav-option:hover{
    border: 1px solid var(--primary-color-text);
 }
 

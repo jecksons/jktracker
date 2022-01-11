@@ -43,11 +43,14 @@ div.results-loading{
 li.card-day{
    display: flex;
    flex-direction: column;
+   justify-content: space-between;
    border: 1px solid var(--primary-color-2);
    border-radius: 16px;
    cursor: default;
    transition: 0.3s ease-out;   
    max-width: 16rem;
+   min-width: 12rem;
+   position: relative;
 }
 
 
@@ -65,6 +68,8 @@ div.card-day-header{
    align-items: center;
    row-gap: 0.5rem;
    border-bottom: 1px solid var(--primary-color-2);  
+   background-color: var(--primary-color-5);
+   border-radius: 15px 15px 0 0;
 }
 
 div.card-day-header h2{
@@ -96,10 +101,21 @@ li.card-day-task-item p{
 }
 
 
+button.btn-expand-day{
+   position: absolute;
+   right: 1rem;
+   margin-top: auto;
+   margin-bottom: auto;
+   display: none;
+}
+
 ol.days-list{
    display: flex;
    flex-direction: row;
-   column-gap: 1rem;
+   justify-content: center;
+   gap: 1rem;
+   width: 100%;   
+   overflow-x: auto;
 }
 
 div.card-day-footer{
@@ -110,12 +126,70 @@ div.card-day-footer{
    font-size: 1.5rem;
    font-weight: bold;
    border-top: 1px solid var(--primary-color-2);
+   background-color: var(--primary-color-5);
+   border-radius: 0 0  15px 15px;
 }
 
-ul.task-items{
+ul.task-items,
+ul.task-items-collapsed{
    flex: 1;
+   display: flex;
+   flex-direction: column;
 }
+
+
 
 input#week-select{
    width: 5rem;
+}
+
+@media only screen and (max-width: 768px)   {
+   ol.days-list{
+      flex-direction: column;            
+      padding: 0 1rem;
+      width: calc(100% - 2rem);
+   }
+
+   li.card-day{
+      max-width: inherit;
+      min-width: inherit;
+      width: calc(100% - 0.5rem);
+   } 
+ 
+   button.btn-expand-day{
+      display: inherit;
+   }
+
+   div.main-content-track{
+      padding: 0;
+   }
+
+   section.header-track{
+      padding: 2.25rem 1rem 1rem;
+   }
+
+   section.week-stats{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      row-gap: 1rem;      
+      margin: 0 1rem;
+      width: calc(100% - 2rem);
+      font-size: 1rem;      
+   }
+
+   div.tracking-data{
+      justify-content: flex-start;
+   }
+
+   div.tracking-data::after{
+      height: 0;
+   }
+
+   ul.task-items{
+      display: none;
+      
+   }
+
+   
 }

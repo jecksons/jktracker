@@ -166,7 +166,7 @@ function TaskItem({task, onStartTracking, onStopTracking, onAddChild}) {
          const fetchTask = async () =>  {
             try {
                const ret = await api.get(`/tasks/?id_parent=${task.id}`);
-               setSubTasks(ret.data);
+               setSubTasks(ret.data.results);
                setSubTasksLoad(SubTaskLoaded);
             }
             catch (err) {
@@ -234,7 +234,7 @@ function TaskItem({task, onStartTracking, onStopTracking, onAddChild}) {
                <label>{taskValues.description}</label>
             </div>
             <div className="task-item-row-mob-bot">
-               <div>
+               <div className="parent-sel-status-mob">
                   <Select 
                      options={TaskStatusOptions}
                      value={taskStatus}
@@ -255,7 +255,7 @@ function TaskItem({task, onStartTracking, onStopTracking, onAddChild}) {
                                  <BsChevronDown size={16} />  :  
                                  <BsChevronRight size={16} />} </button>   
                      </div>
-                  ) : (onAddChild ? <button className="btn-link" onClick={() => onAddChild(task)} >Add child</button> : <div> </div>)
+                  ) : (onAddChild ? <button className="btn-link btn-add-child-mob" onClick={() => onAddChild(task)} >Add child</button> : <div> </div>)
                }
                <div className="task-item-track-det">
                   {
@@ -362,7 +362,7 @@ export default function Home(props) {
 
    return (
       <div className="parent-home">
-         <AppHeader />         
+         <AppHeader selOption={'tasks'} />         
          <div className="main-content">
             <section className="jk-row-05 screen-header" >
                <h1>Tasks</h1>

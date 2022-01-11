@@ -105,6 +105,7 @@ button.btn-link:hover{
     color: var(--primary-color-text);
 }
 
+
 input.inp-form{
     border-bottom: 1px solid var(--primary-color-2);
     border-radius: 0;
@@ -119,7 +120,6 @@ input.inp-form:hover{
 
 label.inp-form{
     font-size: 0.75rem;
-
 }
 
 p.error-message{
