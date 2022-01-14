@@ -93,7 +93,7 @@ function LoginContent(props) {
 function InfoDev() {
    return (
       <section className='info-dev' >
-         <p>Developed by <a href="https://jeckson.me">Jeckson Schwengber</a></p>
+         <p>Developed by <a href="https://jeckson.me" className="link-white">Jeckson Schwengber</a></p>
          <img src={logo} className="small-logo" />
       </section>           
    );

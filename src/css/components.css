@@ -98,6 +98,11 @@ a.link-action{
     font-weight: bold;
 }
 
+a.link-white{
+    text-decoration: none;
+    color: var(--primary-color-text);
+}
+
 button.btn-action:hover,
 a.link-action:hover{
     background-color: #BABABA;   
