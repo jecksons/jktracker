@@ -13,7 +13,8 @@ api.isCancel = (err) => axios.isCancel(err);
 
 api.interceptors.request.use(
     (config) => {
-        const token = TokenService.getLocalAccessToken();
+        config.headers['x-client-version'] = apiConfig.clientVersion;
+        const token = TokenService.getLocalAccessToken();        
         if (token) {
             config.headers['x-access-token'] = token;
         }
@@ -30,7 +31,7 @@ api.interceptors.response.use(
     },
     async (err) => {
         const oriConfig = err.config;
-        if (err.response) {
+        if (err.response) {            
             if (err.response.status === 401) {
                 if (!oriConfig._retry) {
                     const refreshToken = TokenService.getLocalRefreshToken();
@@ -48,7 +49,10 @@ api.interceptors.response.use(
                 TokenService.deleteLocalUser();
                 createBrowserHistory().push('/#login-action');
                 window.location.reload();
-            }            
+            } else if (err.response.status === 426) {
+                createBrowserHistory().push('/');
+                window.location.reload(true);                
+            }
         }
         return Promise.reject(err);
     }
