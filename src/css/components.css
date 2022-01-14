@@ -69,40 +69,66 @@ div.av-select__menu{
 }
 
 button.btn-action,
-button.btn-link{
+button.btn-link,
+a.link-action,
+button.btn-link-nopad{
     padding: 0.5rem 1rem;
-    border-radius: 15px;
-    border: 0;
+    border-radius: 16px;
+    border: 1px solid var(--primary-color);
     cursor: pointer;
     transition: 0.2s ease-in;
+    font-size: 0.8258rem;   
 }
 
-button.btn-action{
+a.link-action{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    text-decoration: none;
+    padding: 0.5875rem 1rem;
+
+}
+
+button.btn-action,
+a.link-action{
     background-color: var(--primary-color-text);
     color: var(--primary-color);
+    border: 1px solid var(--primary-color-text);
+    font-weight: bold;
 }
 
-button.btn-action:hover{
-    background-color: var(--primary-color-2);   
-    color: var(--primary-color-text);
+button.btn-action:hover,
+a.link-action:hover{
+    background-color: #BABABA;   
+    border: 1px solid #BABABA;
     box-shadow: 1px 1px 2px 1px var(--primary-color-4);
 }
 
-button.btn-action:active{
+button.btn-action:active,
+a.link-action:active{
     position: relative;
     top: 2px;
     left: 2px;
 }
 
-button.btn-link{
+button.btn-link,
+button.btn-link-nopad{
     background-color: transparent;    
     color: var(--primary-color-text);
     font-weight: bold;
 }
 
-button.btn-link:hover{
+button.btn-link:hover,
+button.btn-link-nopad:hover{
     background-color: var(--primary-color-2);   
     color: var(--primary-color-text);
+}
+
+button.btn-link-nopad{
+    padding: 0;
+    border-radius: 0;
+    border: 0;
 }
 
 
@@ -127,6 +153,62 @@ p.error-message{
     text-align: center;
 }
 
+p.error-message-primary{
+    color: #ff4d6d;
+    text-align: center;
+}
+
 label.lb-75{
     font-size: 0.75rem;
 }
+
+button.btn-logout{
+    min-width: 10rem;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    background: var(--primary-color);
+    outline: none;
+    border: 1px solid var(--primary-color-2 );
+    color: var(--primary-color-text);
+    font-weight: bold;
+    cursor: pointer;   
+    transition: 0.2s ease-in;
+    font-size: 0.825rem;   
+ }
+ 
+ button.btn-logout:hover{
+    background: var(--primary-color-text);  
+    color: var(--primary-color);
+ }
+
+ button.btn-icon-menu{
+    border: 0;
+    outline: none;
+    background: none;
+    color: var(--primary-color-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    border-radius: 50%;
+    cursor: pointer;
+ }
+
+ button.btn-icon-menu:hover{
+    background-color: var(--primary-color-3);
+ }
+
+ button.btn-close-dialog{
+     position: fixed;
+     top: 0.5rem;
+     right: 0.5rem;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     padding: 0;
+     border: 0;
+     outline: none;
+     background: transparent;
+     color: var(--primary-color-text);
+     cursor: pointer;
+ }

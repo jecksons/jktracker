@@ -1,0 +1,15 @@
+div.div-logout-mob{
+   display: none;
+}
+
+
+@media only screen and (max-width: 768px) {
+   div.div-logout-mob{
+      display: flex;
+   }
+
+   button.btn-logout{
+      display: none;
+   }
+   
+}

@@ -1,9 +1,14 @@
 .jk-row,
-.jk-row-05{
+.jk-row-05,
+.jk-row-top{
    display: flex;
    flex-direction: row;
    justify-content: space-between;
    align-items: center;
+}
+
+.jk-row-top{
+   align-items: flex-start;
 }
 
 .jk-row-05{
@@ -19,18 +24,37 @@
    column-gap: 0.5rem;
 }
 
+.max-width-18{
+   max-width: 18rem;
+}
+
+.min-width-12{
+   min-width: 12rem;
+}
+
 .jk-column,
-.jk-column-05{
+.jk-column-05,
+.jk-column-1{
    display: flex;
    flex-direction: column;
    justify-content: space-between;
    align-items: center;
 }
 
+
+
 .jk-column-05{
    row-gap: 0.5rem;
 }
 
+.jk-column-1{
+   row-gap: 1rem;
+}
+
 .width-100{
    width: 100%;
+}
+
+.align-start{
+   align-items: flex-start;
 }
