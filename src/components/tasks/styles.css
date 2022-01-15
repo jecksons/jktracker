@@ -20,6 +20,8 @@ div.detail-items{
    align-items: center;
 }
 
+
+
 div.task-item-content{
    padding: 0.5rem 1rem;   
 }
@@ -86,6 +88,22 @@ div.parent-task-desc{
 
 div.left-space-desc{
    padding: 1rem;
+}
+
+div.finished-icon,
+div.cancelled-icon{
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   padding: 0.5rem;
+}
+
+div.finished-icon{
+   color: #00b4d8;
+}
+
+div.cancelled-icon{
+   color: #ffadad;
 }
 
 li.task-item-child{
@@ -268,7 +286,6 @@ button.btn-add-child-mob{
 
    section.tasks{
       border-radius: 0;
-
    }
 
    section.screen-header{

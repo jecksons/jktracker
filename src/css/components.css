@@ -217,3 +217,35 @@ button.btn-logout{
      color: var(--primary-color-text);
      cursor: pointer;
  }
+
+
+ button.btn-check,
+ button.btn-check-checked{
+     border: 1px solid var(--primary-color);
+     background-color: var(--primary-color);
+     color: #FAFAFA;
+     padding: 0.5rem 1rem;
+     outline: none;
+     cursor: pointer;
+ }
+
+ button.btn-check:active,
+ button.btn-check-checked:active{
+     position: relative;
+     top: 2px;
+     left: 2px;
+ }
+
+ button.btn-check:hover{
+     background-color: var(--primary-color-2);
+     border: 1px solid var(--primary-color);
+ }
+
+ button.btn-check-checked{
+    border: 1px solid var(--primary-color-2);
+    background-color: var(--primary-color-4);
+ }
+
+ button.btn-check-checked:hover{
+    background-color: var(--primary-color-3);
+ }

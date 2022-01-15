@@ -58,3 +58,7 @@
 .align-start{
    align-items: flex-start;
 }
+
+.line-through{
+   text-decoration: line-through;
+}

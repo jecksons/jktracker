@@ -9,13 +9,17 @@ import AppHeader from "../controls/app-header";
 import './styles.css';
 import SurfaceLoading from '../controls/surface-loading';
 import NewTask from "../controls/new-task";
+import CheckButton from "../controls/check-button";
+import {MdOutlineDone, MdOutlineCancel} from 'react-icons/md';
 
 const OpenedTaskOption = {value: 'O', label: 'Opened'};
+const FinishedTaskOption = {value: 'F', label: 'Finished'};
+const CancelledTaskOption = {value: 'C', label: 'Cancelled'};
 
 const TaskStatusOptions = [
    OpenedTaskOption,
-   {value: 'F', label: 'Finished'},
-   {value: 'C', label: 'Cancelled'},
+   FinishedTaskOption,
+   CancelledTaskOption,
    {value: '-', label: 'All'},
 ]
 
@@ -130,7 +134,7 @@ const SubTaskNone = 0;
 const SubTaskLoading = 1;
 const SubTaskLoaded = 2;
 
-function TaskItem({task, onStartTracking, onStopTracking, onAddChild}) {
+function TaskItem({task, onStartTracking, onStopTracking, onAddChild, showClosedChilds}) {
   
    
    const [taskStatus, setTaskStatus] = useState(null);
@@ -138,6 +142,7 @@ function TaskItem({task, onStartTracking, onStopTracking, onAddChild}) {
    const [showChilds, setShowChilds] = useState(false);
    const [subTasks, setSubTasks] = useState([]);
    const [subTasksLoad, setSubTasksLoad] = useState(SubTaskNone);   
+   const [oldShowClosedChilds, setOldShowClosedChilds] = useState(false);
 
    useEffect(() => {
       const optStatus = TaskStatusOptions.find((itm ) => itm.value === task.id_task_status);
@@ -160,12 +165,21 @@ function TaskItem({task, onStartTracking, onStopTracking, onAddChild}) {
    }, [taskValues]);
 
    useEffect(() => {
-      if ((subTasksLoad === SubTaskNone) && showChilds && task.has_childs) {
+      if (((subTasksLoad === SubTaskNone) || (showClosedChilds !== oldShowClosedChilds)  ) && showChilds && task.has_childs) {
          setSubTasksLoad(SubTaskLoading);
+         setOldShowClosedChilds(showClosedChilds);
          const cancelToken = api.getCancelToken();
          const fetchTask = async () =>  {
             try {
-               const ret = await api.get(`/tasks/?id_parent=${task.id}`);
+               let filter = `id_parent=${task.id}`;
+               if (!showClosedChilds) {
+                  if (taskStatus) {
+                     if (taskStatus.value === OpenedTaskOption.value) {
+                        filter += `&status=${OpenedTaskOption.value}`;
+                     }
+                  }
+               }               
+               const ret = await api.get(`/tasks/?${filter}`);
                setSubTasks(ret.data.results);
                setSubTasksLoad(SubTaskLoaded);
             }
@@ -179,13 +193,16 @@ function TaskItem({task, onStartTracking, onStopTracking, onAddChild}) {
          return () => cancelToken.cancel();
       }
 
-   }, [showChilds, task, subTasksLoad])
+   }, [showChilds, task, subTasksLoad, showClosedChilds])
 
    const renderNormalContent = () => {
       return (
          <div className="jk-row-05 task-item-content">
             <div className="parent-task-desc">
-               <input className="task-description" value={taskValues.description} onChange={e => dispatchTaskValues({field: 'description', value: e.target.value})} />
+               <input 
+                  className={`task-description ${task.id_task_status === CancelledTaskOption.value ? 'line-through' : ''}`} 
+                  value={taskValues.description} 
+                  onChange={e => dispatchTaskValues({field: 'description', value: e.target.value})} />
                {
                   task.has_childs ? 
                   (
@@ -196,7 +213,16 @@ function TaskItem({task, onStartTracking, onStopTracking, onAddChild}) {
                                  <BsChevronDown size={16} />  :  
                                  <BsChevronRight size={16} />} </button>   
                      </div>
-                  ) : (<div className="left-space-desc"> </div>)
+                  ) : 
+                  (
+                     task.id_task_status === FinishedTaskOption.value ? 
+                        <div className="finished-icon"><MdOutlineDone size={16} /></div> : 
+                        (
+                           task.id_task_status === CancelledTaskOption.value ? 
+                              <div className="cancelled-icon"><MdOutlineCancel size={16} /></div> : 
+                              (<div className="left-space-desc"> </div>)
+                        )
+                  )                                                   
                }
             </div>
             <div className="detail-items">
@@ -231,7 +257,7 @@ function TaskItem({task, onStartTracking, onStopTracking, onAddChild}) {
       return (
          <div className="jk-column-05 task-item-content-mobile">
             <div className="task-item-row-mob-top">
-               <label>{taskValues.description}</label>
+               <label className={`${task.id_task_status === CancelledTaskOption.value ? 'line-through' : ''}`}>{taskValues.description}</label>
             </div>
             <div className="task-item-row-mob-bot">
                <div className="parent-sel-status-mob">
@@ -307,6 +333,7 @@ export default function Home(props) {
    const [parentTaskAdding, setParentTaskAdding] = useState(null);
    const [loadingTasks, setLoadingTasks] = useState(true);
    const [activeTask, setActiveTask] = useState(null);
+   const [showClosedChilds, setShowClosedChilds] = useState(false);
    
    useEffect(() => {
       document.title = 'Tasks - JkTracker';
@@ -326,7 +353,7 @@ export default function Home(props) {
       let strFilter = '';
       if (statusFilter && statusFilter.value !== '-') {
          strFilter = '?status=' + statusFilter.value;
-      }
+      }      
       setLoadingTasks(true);
       const cancelToken = api.getCancelToken();
       const fetchTask = async () =>  {
@@ -360,13 +387,20 @@ export default function Home(props) {
       setAddingNew(true);      
    }, []);
 
+
+   const toggleShowClosedChilds = useCallback(() => {
+      setShowClosedChilds(p => !p);
+      
+   }, []);
+
    return (
       <div className="parent-home">
          <AppHeader selOption={'tasks'} />         
          <div className="main-content">
             <section className="jk-row-05 screen-header" >
                <h1>Tasks</h1>
-               <div className="jk-row-05">
+               <div className="jk-row-05">       
+                  {statusFilter?.value === OpenedTaskOption.value && <CheckButton checked={showClosedChilds} onToggle={toggleShowClosedChilds} caption={'Show closed childs'} />           } 
                   <div className="status-select-parent">
                      <Select 
                         options={TaskStatusOptions}
@@ -403,6 +437,7 @@ export default function Home(props) {
                               onStartTracking={onStartTracking}
                               onStopTracking={onStopTracking}
                               onAddChild={onRequestNewTask}
+                              showClosedChilds={showClosedChilds || statusFilter?.value !== OpenedTaskOption.value}
                               task={itm} 
                               /> )}
                         </ul>
