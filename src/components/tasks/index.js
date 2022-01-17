@@ -11,6 +11,7 @@ import SurfaceLoading from '../controls/surface-loading';
 import NewTask from "../controls/new-task";
 import CheckButton from "../controls/check-button";
 import {MdOutlineDone, MdOutlineCancel} from 'react-icons/md';
+import {SuccessToast} from '../controls/toast';
 
 const OpenedTaskOption = {value: 'O', label: 'Opened'};
 const FinishedTaskOption = {value: 'F', label: 'Finished'};
@@ -23,15 +24,49 @@ const TaskStatusOptions = [
    {value: '-', label: 'All'},
 ]
 
+function reducerTasks(state, action) {
+
+   switch (action.type) {
+      case 'set':
+         return action.values;
+      case 'update':
+         let newValues = [...state];
+         action.values.forEach((itm) => {
+            const tskIndex = newValues.findIndex((val, idx) => itm.id === val.id );
+            if (tskIndex >= 0) {
+               newValues[tskIndex] = itm;
+            }
+         })
+         return newValues;
+      case 'prop_change':
+         let newVal = [...state];
+         let tskIndex = newVal.findIndex((itm) => itm.id === action.id_task);
+         if (tskIndex >= 0) {
+            let newObj = {...newVal[tskIndex], ...action.newProps};
+            /* key needed to update the childs */
+            newObj.updKey = (((newObj.updKey ?? 0) * 1000) + 1) / 1000;
+            newVal[tskIndex] = newObj;
+         }
+         return newVal;         
+      case 'append':
+         return [...state, ...action.values];
+      case 'append_first':
+         return [...action.values, ...state];
+      default:
+         throw new Error('Action not expected!');
+   }
+}
+
+
 function ActiveTaskTimer({task, onStartTracking, onStopTracking}) {
 
    const [totalTime, setTotalTime] = useState('00:00:00');
    const [opened, setOpened] = useState(true);
 
    useEffect(() => {      
-      if (task && task.start_time) {         
+      if (task && task.start_time_tracking) {         
          const procTotalTime = () => {
-            const dtFrom = new Date(task.start_time);
+            const dtFrom = new Date(task.start_time_tracking);
             const dtTo = new Date();                  
             setTotalTime(
                   utils.formatFloatAsTime(
@@ -44,6 +79,7 @@ function ActiveTaskTimer({task, onStartTracking, onStopTracking}) {
       }  
    }, [task]);
 
+
    return task &&  (
       <section className={`sticky-timer${opened ? '' : '-hide'}`}>
          <button className="sticky-switch-open" onClick={() => setOpened(p => !p)}>
@@ -55,14 +91,14 @@ function ActiveTaskTimer({task, onStartTracking, onStopTracking}) {
          <div className={`sticky-timer-content${opened ? '' : '-hide'}`}>
             <div className="jk-row-05">
                <label className="sticky-curr-time">{totalTime}</label>
-               <button className={`btn-itm-${task.start_time ? 'stop' : 'start'}`} onClick={() => {
-                  if (task.start_time) {
+               <button className={`btn-itm-${task.start_time_tracking ? 'stop' : 'start'}`} onClick={() => {
+                  if (task.start_time_tracking) {
                      onStopTracking();
                   }
                   else {
                      onStartTracking(task.id);
                   }            
-               }} >{task.start_time ? <TiMediaStop size={16} /> : <BsCaretRightFill size={16} /> }</button>    
+               }} >{task.start_time_tracking ? <TiMediaStop size={16} /> : <BsCaretRightFill size={16} /> }</button>    
             </div>
             <p className="sticky-description">{task.description}</p>
          </div>
@@ -70,9 +106,10 @@ function ActiveTaskTimer({task, onStartTracking, onStopTracking}) {
    );
 }
 
-function TimerTracking({taskId, startTime, onStartTracking, onStopTracking, timeToSum}) {
+function TimerTracking({taskId, startTime, onStartTracking, onStopTracking, timeToSum, canStartStop}) {
 
    const [totalTime, setTotalTime] = useState('00:00:00');
+   const [processingStartStop, setProcessingStartStop] = useState(false);
 
    useEffect(() => {      
       if (startTime) {         
@@ -98,14 +135,32 @@ function TimerTracking({taskId, startTime, onStartTracking, onStopTracking, time
    return (
       <div className="jk-row-05">       
          {(startTime || (timeToSum > 0)) ?  <label>{totalTime}</label>    : <div className="time-empty-space"> </div>}         
-         <button className={`btn-itm-${startTime ? 'stop' : 'start'}`} onClick={() => {
-            if (startTime) {
-               onStopTracking();
-            }
-            else {
-               onStartTracking(taskId);
-            }            
-         }} >{startTime ? <TiMediaStop size={16} /> : <BsCaretRightFill size={16} /> }</button>               
+         {
+            canStartStop ? 
+            (
+               processingStartStop ? 
+                  (
+                     <div>
+                        <SurfaceLoading size={24}/>
+                     </div>   
+                  ) : 
+                  (
+                     <button className={`btn-itm-${startTime ? 'stop' : 'start'}`} onClick={() => {
+                        if (startTime) {
+                           setProcessingStartStop(true);
+                           onStopTracking()
+                           .then((ret) => setProcessingStartStop(false));
+                        }
+                        else {
+                           setProcessingStartStop(true);
+                           onStartTracking(taskId)
+                           .then((ret) => setProcessingStartStop(false));
+                        }            
+                     }} >{startTime ? <TiMediaStop size={16} /> : <BsCaretRightFill size={16} /> }</button>               
+                  )
+            )   : <div>  </div>
+         }
+
       </div>
    )
 }
@@ -130,19 +185,22 @@ function reducerTaskValues(state, action) {
    return newState;
 }
 
+
+
 const SubTaskNone = 0;
 const SubTaskLoading = 1;
 const SubTaskLoaded = 2;
 
-function TaskItem({task, onStartTracking, onStopTracking, onAddChild, showClosedChilds}) {
+function TaskItem({task, onStartTracking, onStopTracking, onAddChild, showClosedChilds, onUpdateTask}) {
   
    
    const [taskStatus, setTaskStatus] = useState(null);
    const [taskValues, dispatchTaskValues] = useReducer(reducerTaskValues, task);
    const [showChilds, setShowChilds] = useState(false);
-   const [subTasks, setSubTasks] = useState([]);
+   const [subTasks, dispatchSubTasks] = useReducer(reducerTasks, []);
    const [subTasksLoad, setSubTasksLoad] = useState(SubTaskNone);   
    const [oldShowClosedChilds, setOldShowClosedChilds] = useState(false);
+   const [prevChildUpdate, setPrevChildUpdate] = useState(null);
 
    useEffect(() => {
       const optStatus = TaskStatusOptions.find((itm ) => itm.value === task.id_task_status);
@@ -151,18 +209,26 @@ function TaskItem({task, onStartTracking, onStopTracking, onAddChild, showClosed
          let dtDue = new Date(task.due_date);
          dispatchTaskValues({field: 'due_date_str', value: utils.getDateStr(dtDue), initialLoading: true });
       }
+      if (task.childs_initially_expanded) {            
+         setShowChilds(true);
+      }
+      
    }, [task]);
 
    useEffect(() => {
       if (taskValues.changed) {
          const inter = setTimeout(() => {         
-            console.log(taskValues);
-            api.post('/tasks/', taskValues);
-         }, 500);   
+            api.post('/tasks/', taskValues).then((ret) => onUpdateTask(ret.data));
+         }, 1000);   
          return () => clearInterval(inter);
       }
       
-   }, [taskValues]);
+   }, [taskValues, onUpdateTask]);
+
+   const onUpdateSubTasks = useCallback((updatedTask) => {
+      dispatchSubTasks({type: 'update', values: [updatedTask]});
+   }, []);
+   
 
    useEffect(() => {
       if (((subTasksLoad === SubTaskNone) || (showClosedChilds !== oldShowClosedChilds)  ) && showChilds && task.has_childs) {
@@ -172,7 +238,8 @@ function TaskItem({task, onStartTracking, onStopTracking, onAddChild, showClosed
          const fetchTask = async () =>  {
             try {
                let filter = `id_parent=${task.id}`;
-               if (!showClosedChilds) {
+               const shouldShowClosedChilds = showClosedChilds || (task.id_task_status !== OpenedTaskOption.value);
+               if (!shouldShowClosedChilds) {
                   if (taskStatus) {
                      if (taskStatus.value === OpenedTaskOption.value) {
                         filter += `&status=${OpenedTaskOption.value}`;
@@ -180,7 +247,7 @@ function TaskItem({task, onStartTracking, onStopTracking, onAddChild, showClosed
                   }
                }               
                const ret = await api.get(`/tasks/?${filter}`);
-               setSubTasks(ret.data.results);
+               dispatchSubTasks({type: 'set', values: ret.data.results});
                setSubTasksLoad(SubTaskLoaded);
             }
             catch (err) {
@@ -191,9 +258,17 @@ function TaskItem({task, onStartTracking, onStopTracking, onAddChild, showClosed
          }
          fetchTask();      
          return () => cancelToken.cancel();
+      } else {
+         if (task && 
+               (subTasksLoad === SubTaskLoaded) && 
+               task.childsToUpdate && 
+               (!prevChildUpdate || prevChildUpdate !== task.childsToUpdate)) {
+            dispatchSubTasks({type: 'update', values: task.childsToUpdate.items});
+            setPrevChildUpdate(task.childsToUpdate);
+         }         
       }
 
-   }, [showChilds, task, subTasksLoad, showClosedChilds])
+   }, [showChilds, task, subTasksLoad, showClosedChilds, prevChildUpdate])
 
    const renderNormalContent = () => {
       return (
@@ -247,6 +322,7 @@ function TaskItem({task, onStartTracking, onStopTracking, onAddChild, showClosed
                <TimerTracking  taskId={task.id} startTime={task.start_time_tracking} 
                   onStartTracking={onStartTracking}
                   onStopTracking={onStopTracking}
+                  canStartStop={task.id_task_status === OpenedTaskOption.value}
                />
             </div>               
          </div>         
@@ -295,6 +371,7 @@ function TaskItem({task, onStartTracking, onStopTracking, onAddChild, showClosed
                      onStartTracking={onStartTracking}
                      onStopTracking={onStopTracking}
                      timeToSum={task.tracked_time}
+                     canStartStop={task.id_task_status === OpenedTaskOption.value}
                   />                  
                </div>
             </div>
@@ -311,7 +388,11 @@ function TaskItem({task, onStartTracking, onStopTracking, onAddChild, showClosed
                (
                   subTasksLoad === SubTaskLoaded ?  
                      <ul >
-                        {subTasks.map((itm) => <TaskItem key={itm.id} onStopTracking={onStopTracking} onStartTracking={onStartTracking} task={itm}  /> )}
+                        {subTasks.map((itm) => <TaskItem key={itm.id} 
+                           onStopTracking={onStopTracking} 
+                           onStartTracking={onStartTracking} 
+                           onUpdateTask={onUpdateSubTasks}
+                           task={itm}  /> )}
                      </ul>    : 
                      subTasksLoad === SubTaskLoading &&
                         <div className="sub-task-loading">
@@ -326,7 +407,7 @@ function TaskItem({task, onStartTracking, onStopTracking, onAddChild, showClosed
 
 export default function Home(props) {
 
-   const [tasks, setTasks] = useState([]);
+   const [tasks, dispatchTasks] = useReducer(reducerTasks, []);
    const [statusFilter, setStatusFilter] = useState(OpenedTaskOption);
    const [keySearch, setKeySearch] = useState(0);
    const [addingNew, setAddingNew] = useState(false);
@@ -339,15 +420,68 @@ export default function Home(props) {
       document.title = 'Tasks - JkTracker';
    }, []);
 
-   const onStopTracking = useCallback(() => {
-      api.post('tasks/track/', {action: 'F'})
-      .then((ret) => setKeySearch(prev => prev + 1));
+   const onStopTracking = useCallback(async () => {
+      const ret = await api.post('tasks/track/', {action: 'F'}); 
+      if (ret.data.previousTask) {
+         let itmUpdate = ret.data.previousTask;
+         if (itmUpdate.parent_data) {
+            itmUpdate = {...itmUpdate.parent_data, childsToUpdate: {items: [itmUpdate]}};
+         }
+         dispatchTasks({type: 'update', values: [itmUpdate]});
+      }
+      setActiveTask(null);
    }, []);
 
-   const onStartTracking = useCallback((taskId) => {
-      api.post('tasks/track/', {action: 'S', id_task: taskId})
-      .then((ret) => setKeySearch(prev => prev + 1));
+   const onStartTracking = useCallback(async (taskId) => {
+      const ret = await api.post('tasks/track/', {action: 'S', id_task: taskId});
+      let updTasks = [];         
+      const currTask = ret.data.currentTask;
+      const prevTask = ret.data.previousTask;         
+      setActiveTask(currTask);
+      if (currTask && prevTask) {
+         /* this treatment is for update beetwen siblings */
+         if (currTask.parent_data && prevTask.parent_data) {
+            if (currTask.parent_data.id === prevTask.parent_data.id) {                  
+               dispatchTasks({type: 'update', values: [
+                  {...currTask.parent_data, childsToUpdate: {items: [currTask, prevTask]}}
+
+               ]});                  
+               return;
+            }
+         }
+         /* this treatment is for parent-child toggle */
+         if (currTask.parent_data) {
+            if (currTask.parent_data.id === prevTask.id) {
+               dispatchTasks({type: 'update', values: [
+                  {...currTask.parent_data, childsToUpdate: {items: [currTask]}}
+               ]});                  
+               return;
+            }               
+         }
+         
+      }
+      if (currTask) {
+         if (currTask.parent_data) {
+            updTasks.push({...currTask.parent_data, childsToUpdate: {items: [currTask]}});
+         } else {
+            updTasks.push(currTask);
+         }                        
+      }
+      if (prevTask) {
+         if (prevTask.parent_data) {               
+            updTasks.push({...prevTask.parent_data, childsToUpdate: {items: [prevTask]}});
+         } else {
+            updTasks.push(prevTask);
+         }            
+      }
+      if (updTasks.length > 0) {
+         dispatchTasks({type: 'update', values: updTasks});
+      }
    }, []);
+
+   const onUpdateTask = useCallback((updatedTask) => {
+      dispatchTasks({type: 'update', values: [updatedTask]});
+   }, [])
 
    useEffect(() => {
       let strFilter = '';
@@ -359,8 +493,8 @@ export default function Home(props) {
       const fetchTask = async () =>  {
          try {
             const ret = await api.get('/tasks/' + strFilter);
-            setTasks(ret.data.results);
-            setActiveTask(ret.data.activeTask);
+            dispatchTasks({type: 'set', values: ret.data.results});
+            setActiveTask(ret.data.activeTask ?? null);
             setLoadingTasks(false);
          }
          catch (err) {
@@ -377,10 +511,25 @@ export default function Home(props) {
 
    const onCloseAddTask = useCallback((newTask) => {
       setAddingNew(false);
-      if (newTask) {
-         setKeySearch(prev => prev + 1);
+      if (newTask) {         
+         if (statusFilter?.value === OpenedTaskOption.value) {
+            if (newTask.id_task_parent)  {
+               dispatchTasks({
+                  type: 'prop_change', 
+                  id_task: newTask.id_task_parent, 
+                  newProps: {has_childs: true, childs_initially_expanded: true}});
+            } else {
+               dispatchTasks({type: 'append_first', values: [newTask]});
+            }            
+         } else {
+            setKeySearch(prev => prev + 1);            
+         }         
+         SuccessToast.fire({
+            icon: 'success',
+            title: 'Task added with success'
+         });
       }
-   }, []);
+   }, [statusFilter]);
 
    const onRequestNewTask = useCallback((parentTask) => {
       setParentTaskAdding(parentTask);
@@ -389,8 +538,7 @@ export default function Home(props) {
 
 
    const toggleShowClosedChilds = useCallback(() => {
-      setShowClosedChilds(p => !p);
-      
+      setShowClosedChilds(p => !p);      
    }, []);
 
    return (
@@ -433,11 +581,12 @@ export default function Home(props) {
                         </div>
                         <ul key={keySearch} className="tasks">
                            {tasks.map((itm) => <TaskItem 
-                              key={itm.id} 
+                              key={itm.id + (itm.updKey ?? 0) } 
                               onStartTracking={onStartTracking}
                               onStopTracking={onStopTracking}
                               onAddChild={onRequestNewTask}
-                              showClosedChilds={showClosedChilds || statusFilter?.value !== OpenedTaskOption.value}
+                              onUpdateTask={onUpdateTask}                              
+                              showClosedChilds={showClosedChilds}
                               task={itm} 
                               /> )}
                         </ul>
