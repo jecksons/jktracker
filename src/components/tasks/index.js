@@ -612,17 +612,24 @@ export default function Home(props) {
                               <label>Current</label>
                            </div>
                         </div>
-                        <ul key={keySearch} className="tasks">
-                           {tasks.map((itm) => <TaskItem 
-                              key={itm.id + (itm.updKey ?? 0) } 
-                              onStartTracking={onStartTracking}
-                              onStopTracking={onStopTracking}
-                              onAddChild={onRequestNewTask}
-                              onUpdateTask={onUpdateTask}                              
-                              showClosedChilds={showClosedChilds}
-                              task={itm} 
-                              /> )}
-                        </ul>
+                        {
+                           tasks.length > 0 ? 
+                              (
+                                 <ul key={keySearch} className="tasks">
+                                    {tasks.map((itm) => <TaskItem 
+                                       key={itm.id + (itm.updKey ?? 0) } 
+                                       onStartTracking={onStartTracking}
+                                       onStopTracking={onStopTracking}
+                                       onAddChild={onRequestNewTask}
+                                       onUpdateTask={onUpdateTask}                              
+                                       showClosedChilds={showClosedChilds}
+                                       task={itm} 
+                                       /> )}
+                                 </ul>
+                              ) : 
+                              <NotFoundSurface title="Still aren't tasks created." message="Try to create a new task." />                                                         
+                        }
+                        
                      </>
                }               
             </section>
