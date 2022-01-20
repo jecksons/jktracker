@@ -14,6 +14,7 @@ import NewTask from "../controls/new-task";
 import CheckButton from "../controls/check-button";
 import {MdOutlineDone, MdOutlineCancel} from 'react-icons/md';
 import {SuccessToast} from '../controls/toast';
+import NotFoundSurface from '../controls/not-found-surface';
 
 const OpenedTaskOption = {value: 'O', label: 'Opened'};
 const FinishedTaskOption = {value: 'F', label: 'Finished'};
