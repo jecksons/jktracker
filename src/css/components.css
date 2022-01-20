@@ -30,6 +30,7 @@ div.av-select-error__control{
     border-radius: 0;    
     background-color: var(--primary-color);
     color: var(--primary-color-text);
+    font-size: 0.75rem;    
 }
 
 div.css-qc6sy-singleValue{
@@ -41,7 +42,7 @@ div.av-select__control:hover,
 div.av-select__control--is-focused:hover,
 div.av-select-error__control:hover,
 div.av-select-error__control--is-focused:hover{
-    border: 1px solid #707070;
+    border: 1px solid #707070;    
 }
 
 div.av-select__control--is-focused,
@@ -51,6 +52,7 @@ div.av-select-error__control--is-focused{
 
 div.av-select__option{
    background-color: var(--primary-color-3);
+   font-size: 0.75rem;
 }
 
 div.av-select__option--is-focused,
@@ -67,6 +69,20 @@ div.av-select-error__option--is-selected{
 div.av-select__menu{
    background-color: var(--primary-color-3);
 }
+
+div.parent-select-100{
+    width: 100%;    
+}
+
+div.parent-select-100 div.css-b62m3t-container{
+    width: 100%;
+}
+
+div.parent-select-form  div.av-select__control,
+div.parent-select-form  div.av-select-error__control{
+    border-bottom: 1px solid #ebebeb;
+}
+
 
 button.btn-action,
 button.btn-link,
@@ -104,7 +120,8 @@ a.link-white{
 }
 
 button.btn-action:hover,
-a.link-action:hover{
+a.link-action:hover,
+button.btn-plus:hover{
     background-color: #BABABA;   
     border: 1px solid #BABABA;
     box-shadow: 1px 1px 2px 1px var(--primary-color-4);
@@ -127,6 +144,7 @@ button.btn-link-nopad{
 button.btn-link:hover,
 button.btn-link-nopad:hover{
     background-color: var(--primary-color-2);   
+    border: 1px solid var(--primary-color-2);
     color: var(--primary-color-text);
 }
 
@@ -149,6 +167,11 @@ input.inp-form:hover{
     border-radius: 6px;
 }
 
+input.inp-date{
+    max-width: 6rem;
+    padding: 0.625rem 0.5rem;
+}
+
 label.inp-form{
     font-size: 0.75rem;
 }
@@ -166,6 +189,18 @@ p.error-message-primary{
 label.lb-75{
     font-size: 0.75rem;
 }
+
+label.lb-card-title{
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+
+input.inp-error{    	
+	border: 1px solid #d00000;
+    border-radius: 6px;
+}
+
 
 button.btn-logout{
     min-width: 10rem;
@@ -248,4 +283,132 @@ button.btn-logout{
 
  button.btn-check-checked:hover{
     background-color: var(--primary-color-3);
+ }
+
+ button.btn-tab,
+ button.btn-tab-sel{
+     padding: 1rem 0.5rem;
+     border: 0;
+     font-weight: bold;
+     outline: none;
+     color: #c0c0c0;
+     border-bottom: 2px solid transparent;
+     transition: border-bottom 0.3s ease-in-out;     
+     background-color: transparent;
+     cursor: pointer;
+ }
+
+ button.btn-tab-sel{
+     border-bottom: 2px solid var(--primary-color-text);
+     color: var(--primary-color-text);
+ }
+
+ button.btn-tab-sel:hover{
+    color: #ebebeb;
+ }
+
+ button.btn-tab:hover{
+    color: #ebebeb;
+ }
+
+ button.btn-no-shadow{
+    box-shadow: none;
+ }
+
+
+ button.btn-pad-025{
+     padding: 0.25rem;
+ }
+
+
+ button.btn-plus{
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     border-radius: 50%;
+     padding: 0.5rem;
+     background-color: var(--primary-color-text);
+     color: var(--primary-color);
+     border: 0;
+     outline: none;
+     position: absolute;
+     bottom: 1rem;
+     left: 50%;
+     transform: translateX(-50%);
+     cursor: pointer;
+     border: 1px solid var(--primary-color-text);
+ }
+
+ button.btn-plus:active{
+     transform: translate(calc(-50% + 2px), 2px);
+ }
+
+
+ div.overlay-dialog{
+    position: fixed;
+    inset: 0px;
+    background-color: rgb(56, 56, 56, 0.7);    
+ }
+ 
+ 
+ div.dialog-content{
+    left: 50%;
+    top: 50%;
+    position: absolute;
+    width: fit-content;        
+    transform: translate(-50%, -50%);    
+    outline: 0;
+ }
+ 
+ section.modal-content{
+    background-color: var(--primary-color);
+    padding: 1rem;
+    color: var(--primary-color-text);
+    display: flex;
+    flex-direction: column;
+    row-gap: 1rem;
+    align-items: flex-start;
+    width: 23rem;
+ }
+ 
+ 
+ label.modal-title{
+    text-align: center;
+    width: 100%;
+ }
+ 
+ div.modal-start{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    row-gap: 0.5rem;
+ }
+ 
+ 
+ div.confirm-buttons{
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-start;
+    width: 100%;
+    column-gap: 0.5rem;
+ }
+ 
+ div.modal-header{
+    align-items: flex-start;
+    background-color: var(--primary-color-4);
+    padding: 1rem;
+    width: calc(100% - 2rem);
+ }
+ 
+ div.modal-header h3{
+    font-size: 0.75rem;
+ 
+ }
+ 
+ 
+ @media screen  and (max-width: 420px) {
+    section.modal-content{
+       width: calc(100vw - 2rem);
+    }
+ 
  }

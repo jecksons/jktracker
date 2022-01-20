@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useReducer, useState } from "react";
+import {Link, useNavigate} from 'react-router-dom';
 import Select from "react-select";
-import {BsChevronDown,BsChevronRight, BsCaretRightFill } from 'react-icons/bs';
+import {BsChevronDown,BsChevronRight, BsCaretRightFill, BsCheck2 } from 'react-icons/bs';
 import {AiOutlineDown, AiOutlineUp} from 'react-icons/ai';
 import {TiMediaStop} from 'react-icons/ti'; 
+import {MdOutlineEdit} from 'react-icons/md';
 import api from "../../services/api";
 import utils from "../../services/utils";
 import AppHeader from "../controls/app-header";
@@ -17,12 +19,24 @@ const OpenedTaskOption = {value: 'O', label: 'Opened'};
 const FinishedTaskOption = {value: 'F', label: 'Finished'};
 const CancelledTaskOption = {value: 'C', label: 'Cancelled'};
 
-const TaskStatusOptions = [
+export const TaskStatusOptions = [
+   OpenedTaskOption,
+   FinishedTaskOption,
+   CancelledTaskOption
+]
+
+const TaskStatusOptionsFilter = [
    OpenedTaskOption,
    FinishedTaskOption,
    CancelledTaskOption,
    {value: '-', label: 'All'},
 ]
+
+export const TaskStatusObj = {
+   'O': 'Opened',
+   'F': 'Finished',
+   'C': 'Cancelled'
+};
 
 function reducerTasks(state, action) {
 
@@ -191,8 +205,7 @@ const SubTaskNone = 0;
 const SubTaskLoading = 1;
 const SubTaskLoaded = 2;
 
-function TaskItem({task, onStartTracking, onStopTracking, onAddChild, showClosedChilds, onUpdateTask}) {
-  
+function TaskItem({task, onStartTracking, onStopTracking, onAddChild, showClosedChilds, onUpdateTask}) {  
    
    const [taskStatus, setTaskStatus] = useState(null);
    const [taskValues, dispatchTaskValues] = useReducer(reducerTaskValues, task);
@@ -201,9 +214,11 @@ function TaskItem({task, onStartTracking, onStopTracking, onAddChild, showClosed
    const [subTasksLoad, setSubTasksLoad] = useState(SubTaskNone);   
    const [oldShowClosedChilds, setOldShowClosedChilds] = useState(false);
    const [prevChildUpdate, setPrevChildUpdate] = useState(null);
+   const [editingDescription, setEditingDescription] = useState(false);
+   const navigate = useNavigate();
 
    useEffect(() => {
-      const optStatus = TaskStatusOptions.find((itm ) => itm.value === task.id_task_status);
+      const optStatus = TaskStatusOptionsFilter.find((itm ) => itm.value === task.id_task_status);
       setTaskStatus(optStatus);
       if (task.due_date) {
          let dtDue = new Date(task.due_date);
@@ -240,8 +255,8 @@ function TaskItem({task, onStartTracking, onStopTracking, onAddChild, showClosed
                let filter = `id_parent=${task.id}`;
                const shouldShowClosedChilds = showClosedChilds || (task.id_task_status !== OpenedTaskOption.value);
                if (!shouldShowClosedChilds) {
-                  if (taskStatus) {
-                     if (taskStatus.value === OpenedTaskOption.value) {
+                  if (task.id_task_status) {
+                     if (task.id_task_status === OpenedTaskOption.value) {
                         filter += `&status=${OpenedTaskOption.value}`;
                      }
                   }
@@ -268,16 +283,27 @@ function TaskItem({task, onStartTracking, onStopTracking, onAddChild, showClosed
          }         
       }
 
-   }, [showChilds, task, subTasksLoad, showClosedChilds, prevChildUpdate])
+   }, [showChilds, task, subTasksLoad, showClosedChilds, prevChildUpdate, oldShowClosedChilds])
 
    const renderNormalContent = () => {
       return (
          <div className="jk-row-05 task-item-content">
             <div className="parent-task-desc">
-               <input 
-                  className={`task-description ${task.id_task_status === CancelledTaskOption.value ? 'line-through' : ''}`} 
-                  value={taskValues.description} 
-                  onChange={e => dispatchTaskValues({field: 'description', value: e.target.value})} />
+               {
+                  editingDescription ? 
+                     <div className="jk-row-05 width-100">
+                        <input 
+                           autoFocus={true}
+                           className={`flex-1 inp-form ${task.id_task_status === CancelledTaskOption.value ? 'line-through' : ''}`} 
+                           value={taskValues.description} 
+                           onChange={e => dispatchTaskValues({field: 'description', value: e.target.value})} />  
+                        <button className="btn-icon btn-no-shadow btn-pad-025" onClick={() => setEditingDescription(false)}> <BsCheck2 size={16} /> </button>                  
+                     </div> :                     
+                     <div className="jk-row-05 flex-1 parent-link-desc">
+                        <Link className="task-description" to={`/tasks/edit/${task.unique_code}`}>{taskValues.description}</Link>
+                        <button className="btn-icon btn-no-shadow btn-pad-025" onClick={() => setEditingDescription(true)}> <MdOutlineEdit size={16} />  </button>                  
+                     </div>               
+               }               
                {
                   task.has_childs ? 
                   (
@@ -329,16 +355,23 @@ function TaskItem({task, onStartTracking, onStopTracking, onAddChild, showClosed
       );
    }
 
+   const handleClickTask = useCallback((e) => {
+      e.preventDefault();
+      if (utils.hasClickedOnClass(e.target, 'task-item-content-mobile', ['BUTTON', 'A'], ['av-select__control', 'av-select__option'])) {
+         navigate(`/tasks/edit/${task.unique_code}`);
+      }      
+   }, [task.unique_code]);
+
    const renderMobileContent = () => {
       return (
-         <div className="jk-column-05 task-item-content-mobile">
+         <div className="jk-column-05 task-item-content-mobile" onClick={handleClickTask}>
             <div className="task-item-row-mob-top">
                <label className={`${task.id_task_status === CancelledTaskOption.value ? 'line-through' : ''}`}>{taskValues.description}</label>
             </div>
             <div className="task-item-row-mob-bot">
                <div className="parent-sel-status-mob">
                   <Select 
-                     options={TaskStatusOptions}
+                     options={TaskStatusOptionsFilter}
                      value={taskStatus}
                      classNamePrefix='av-select'
                      onChange={(itm) => {
@@ -545,19 +578,19 @@ export default function Home(props) {
       <div className="parent-home">
          <AppHeader selOption={'tasks'} />         
          <div className="main-content">
-            <section className="jk-row-05 screen-header" >
+            <section className="jk-row-05 screen-header flex-wrap" >
                <h1>Tasks</h1>
-               <div className="jk-row-05">       
+               <div className="jk-row-05 flex-wrap just-center">       
                   {statusFilter?.value === OpenedTaskOption.value && <CheckButton checked={showClosedChilds} onToggle={toggleShowClosedChilds} caption={'Show closed childs'} />           } 
                   <div className="status-select-parent">
                      <Select 
-                        options={TaskStatusOptions}
+                        options={TaskStatusOptionsFilter}
                         value={statusFilter}
                         classNamePrefix='av-select'
                         onChange={(itm) => setStatusFilter(itm)}
                      />
                   </div>
-                  <button className="btn-action" onClick={() => onRequestNewTask()}>New task</button>
+                  <button className="btn-action min-width-8" onClick={() => onRequestNewTask()}>New task</button>
                </div>               
             </section>
             <section className="tasks"> 
@@ -604,3 +637,4 @@ export default function Home(props) {
       </div>
    );
 }
+

@@ -7,6 +7,7 @@ import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import './styles.css';
 import SurfaceLoading from "../controls/surface-loading";
+import NotFoundSurface from '../controls/not-found-surface';
 
 
 function DayTracked({dayData}) {
@@ -101,15 +102,21 @@ export default function TimeTracking(props) {
                   </div> : 
                   (
                      qrResult && (
-                        <div className="jk-column-05 width-100 tracking-data">
-                           <section className="jk-row-05 width-100 week-stats">
-                              <label>{`${utils.getDateStr(qrResult.period.fromDt)} to ${utils.getDateStr(qrResult.period.toDt)}`}</label>
-                              <label>{`Total hours: ${utils.formatDecimalHours(qrResult.totalHours)}`}</label>
-                           </section>
-                           <ol className="days-list">
-                              {qrResult.days.map((itm) => <DayTracked key={itm.date}  dayData={itm} /> )}
-                           </ol>   
-                        </div>
+                        qrResult.days.length > 0  ?
+                           (
+                              <div className="jk-column-05 width-100 tracking-data">
+                                 <section className="jk-row-05 width-100 week-stats">
+                                    <label>{`${utils.getDateStr(qrResult.period.fromDt)} to ${utils.getDateStr(qrResult.period.toDt)}`}</label>
+                                    <label>{`Total hours: ${utils.formatDecimalHours(qrResult.totalHours ?? 0)}`}</label>
+                                 </section>
+                                 <ol className="days-list">
+                                    {qrResult.days.map((itm) => <DayTracked key={itm.date}  dayData={itm} /> )}
+                                 </ol>   
+                              </div>
+                           ) : 
+                           <NotFoundSurface title="There are no records for the selected week." message="Try to register times to show data here." />
+
+                        
                      )
                   )
             }          

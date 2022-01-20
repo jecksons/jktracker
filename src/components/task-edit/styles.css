@@ -1,0 +1,244 @@
+div.task-edit-content{
+   display: flex;
+   flex-direction: column;
+   height: 100vh;
+}
+
+input.inp-description{
+   width: calc(100% - 2rem);
+}
+
+section.tsk-edit-body{
+   display: flex;
+   flex-direction: row;
+   flex: 1;
+   margin: 1rem;   
+   max-height: calc(100vh - 6.5rem);
+   max-width: 73rem;
+}
+
+aside.a-task-list{
+   max-width: 30rem;
+   border: 1px solid var(--primary-color-2);   
+   position: relative;
+}
+
+li.card-task-item,
+li.card-task-item-child{
+   gap: 1rem;   
+   cursor: pointer;
+   transition: background-color 0.15s ease-in-out;
+   min-width: 12rem;
+}
+
+li.card-task-item{
+   border-top: 0;
+}
+
+li.card-task-item-child{
+   background-color: var(--primary-color-3);
+   margin-left: 1rem;
+}
+
+li.card-task-item:hover,
+li.card-task-item-child:hover{
+   background-color: var(--primary-color-5);
+}
+
+li.card-task-sel-child{
+   background-color: var(--primary-color-4);   
+   width: calc(100% - 3rem - 2px);
+   border-right: 2px solid var(--primary-color-4);
+
+}
+
+li.card-task-sel{
+   background-color: var(--primary-color-4);   
+   width: calc(100% - 2rem - 2px);
+   border-right: 2px solid var(--primary-color-4);
+}
+
+section.task-sect-mob{
+   display: none;
+}
+
+section.task-sect-mob > section.card-primary{
+   width: 100%;
+}
+
+label.task-hour{
+   font-size: 1.5rem;
+   font-weight: bold;
+}
+
+section.tsk-edit-container{
+   background-color: var(--primary-color-4);
+   display: flex;
+   flex-direction: column;
+   flex: 1;
+   border-bottom: 1px solid var(--primary-color-2);   
+   border-top: 1px solid var(--primary-color-2);   
+   border-right: 1px solid var(--primary-color-2);   
+   padding: 1.5rem;
+   max-height: 100%;
+   min-width: 23rem;
+}   
+
+div.css-b62m3t-container{
+   min-width: 8rem;
+}
+
+section.tsk-content-client{
+   flex: 1;
+   border: 1px solid var(--primary-color-3);
+   border-radius: 4px;
+   padding: 1rem;
+   display: flex;
+   flex-direction: column;
+   position: relative;
+}
+
+div.header-tsk-edit{
+   display: flex;
+   flex-direction: row;
+   justify-content: space-between;
+   align-items: flex-start;
+   gap: 1rem;
+   border-bottom: 1px solid var(--primary-color-3);
+   padding-bottom: 1rem;
+}
+
+label.title-tsk-edit{
+   font-size: 1.5rem;
+   font-weight: lighter;
+}
+
+div.header-week-time{
+   display: flex;
+   flex-direction: row;
+   justify-content: space-between;
+   gap: 1rem;
+   background-color: var(--primary-color);
+   padding: 0.5rem;
+   align-items: center;
+}
+
+div.header-week-time::before{
+   content: " ";
+   width: 5.625rem;
+}
+
+div.item-hour-recorded{
+   display: flex;
+   flex-direction: row;
+   gap: 1rem;
+   justify-content: space-between;
+   align-items: center;
+   box-shadow: 0 1px 1px 0 var(--primary-color);
+   padding: 0.25rem;
+}
+
+div.item-hour-recorded:hover{
+   background-color: var(--primary-color-5);
+}
+
+div.billbd-time{
+   background-color: var(--primary-color);
+   padding-bottom: 0.625rem;
+   border: 1px solid var(--primary-color-2);
+   border-radius: 10px;
+   display: flex;
+   flex-direction: column;
+   position: relative;
+   align-items: center;
+   gap: 0.5rem;
+   cursor: default;
+}
+
+div.billbd-time > div {
+   background-color: var(--primary-color-4);
+   padding: 0.5rem 1.5rem;
+   border-radius: 10px 10px 0 0;
+}
+
+div.billbd-time h3{
+   font-size: 0.75rem;   
+   min-width: 4.5rem;
+}
+
+div.billbd-time label{
+   font-size: 1.5rem;
+   font-weight: lighter;   
+}
+
+div.tsk-form-buttons{
+   display: flex;
+   flex-direction: row;
+   justify-content: flex-end;   
+   width: 100%;
+   gap: 1rem;
+}
+
+button#btn-del-form{
+   display: none;
+}
+
+
+@media only screen and (max-width: 1000px) {
+ 
+   div.header-week-time::before{
+      content: none;
+   }
+   
+}
+
+
+@media only screen and (max-width: 768px) {
+   section.tsk-edit-body{
+      margin: 0;
+      max-height: none;
+      flex-direction: column;
+   }
+
+   aside.a-task-list{
+      display: none;
+   }
+
+   div.billbd-time{
+      display: none;
+   }
+
+   section.tsk-edit-container{
+      min-width: 0;
+      padding: 1rem;
+   }
+
+   
+   div.tsk-form-buttons{      
+      flex-direction: column;            
+      align-items: center;
+   }
+
+   button#btn-del-form{
+      display: inline-block;
+   }
+
+   div.tsk-form-buttons button {
+      min-width: 12rem;
+   }
+
+   button#btn-del-tsk-top{
+      display: none;
+   }
+
+   div.header-tsk-edit{
+      display: none;
+   }
+
+   section.task-sect-mob{
+      display: flex;
+   }
+   
+
+   
+}

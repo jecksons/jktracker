@@ -1,5 +1,5 @@
 import './styles.css';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import logo from '../../images/logo.png';
 import LogoutButton from '../logout-button';
 import {RiMenu5Fill} from 'react-icons/ri';
@@ -44,6 +44,12 @@ function LeftSideMenu({selOption, show, onRequestClose}) {
 export default function AppHeader({selOption}) {
 
    const [showMenu, setShowMenu] = useState(false);
+
+   useEffect(() => {
+      const body = document.querySelector('body');
+      console.log('changed the query selectro to ' + (showMenu ? 'hidden' : 'auto'));
+      body.style.overflow = showMenu ? 'hidden' : 'auto';
+   }, [showMenu]);
 
    return <header className='app-header'>
       <section className='header-norm'>

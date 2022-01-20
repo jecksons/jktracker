@@ -1,0 +1,6 @@
+div.tot-hours-edit{
+   justify-content: flex-end;
+   align-items: flex-start;
+   padding: 0.5rem 0.5rem 1rem 0.5rem;
+   border-bottom: 1px solid var(--primary-color-4);
+}

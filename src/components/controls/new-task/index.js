@@ -3,9 +3,9 @@ import Modal from 'react-modal';
 import api from '../../../services/api';
 import utils from '../../../services/utils';
 import SurfaceLoading from '../surface-loading';
-import './styles.css';
+import PropTypes from 'prop-types';
 
-export default function NewTask({parentTask, show, onCloseModal}) {
+function NewTask({parentTask, show, onCloseModal}) {
 
    const [description, setDescription]  = useState('');
    const [saving, setSaving] = useState(false);
@@ -47,14 +47,14 @@ export default function NewTask({parentTask, show, onCloseModal}) {
       return <Modal 
          isOpen={true}
          onRequestClose={onClose}
-         overlayClassName={'overlay-new-task'}
+         overlayClassName={'overlay-dialog'}
          className={'dialog-content'} >
          <section className='modal-content jk-column-05'>
             <label className='modal-title'>New Task</label>
             {
                parentTask && 
                   (
-                     <div className='jk-column-05 parent-info'>
+                     <div className='jk-column-05 modal-header'>
                         <h3>Parent</h3>
                         <h4>{parentTask.description}</h4>
                      </div>                     
@@ -66,13 +66,14 @@ export default function NewTask({parentTask, show, onCloseModal}) {
                   className='inp-form task-description'  
                   value={description} 
                   autoFocus={true}
+                  placeholder='Task description'
                   onChange={(e) => setDescription(e.target.value)} />
             </div>
             { errorMessage !== ''  &&
                <p className='error-message'>{errorMessage}</p>
              }
             <div className='confirm-buttons'>
-               <button className='btn-action save-task' onClick={onSave}>
+               <button className='btn-action min-width-8' onClick={onSave}>
                   {saving ?
                      <SurfaceLoading size={16} onBackground={true} /> : 
                      'Save'
@@ -88,3 +89,12 @@ export default function NewTask({parentTask, show, onCloseModal}) {
    } else 
       return null;
 }
+
+
+NewTask.propTypes = {   
+   show: PropTypes.bool,
+   onCloseModal: PropTypes.func.isRequired
+}
+
+
+export default NewTask;

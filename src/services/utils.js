@@ -47,16 +47,48 @@ class Utils {
         history.replace(`/unknown-error/?requestedURL=${history.location ? history.location.pathname :  ''}&message=${this.getHTTPError(err)}`);
    }   
 
-   formatFloatAsTime(value, includeSeconds = true) {      
-      const hrs = Math.trunc(value * 24);
-      const mins = Math.trunc((value -(hrs / 24)) * 24 * 60);
-      const secs = Math.trunc( (value - (hrs/ 24 ) - (mins / 60 / 24 ) ) * 24 * 60 * 60);
-      if (includeSeconds) {
-        return hrs.toString().padStart(2, '0') + ':' + mins.toString().padStart(2, '0') + ':' + secs.toString().padStart(2, '0');
-      } else {
-        return hrs.toString().padStart(2, '0') + ':' + mins.toString().padStart(2, '0');
-      }      
-   }
+    formatFloatAsTime(value, includeSeconds = true) {      
+        let hrs = Math.trunc(value * 24);
+        let mins = Math.abs(Math.round((value -(hrs / 24)) * 24 * 60));
+        if (mins === 60) {
+            mins = 0;
+            hrs += 1;
+        }
+        let secs = Math.abs(Math.round( (value - (hrs/ 24 ) - (mins / 60 / 24 ) ) * 24 * 60 * 60));
+        if (secs === 60) {
+            secs = 0;
+            mins += 1;
+        }
+        if (includeSeconds) {
+            return hrs.toString().padStart(2, '0') + ':' + mins.toString().padStart(2, '0') + ':' + secs.toString().substring(0, 2).padStart(2, '0');
+        } else {
+            return hrs.toString().padStart(2, '0') + ':' + mins.toString().padStart(2, '0');
+        }      
+    }
+
+    hasClickedOnClass(target, classTarget, elementsToExclude = [], classesToExclude = []) {
+        let par = target;        
+        while (par) {
+           const tgName = par.tagName;
+           if (elementsToExclude.includes(tgName)) {
+              return false;
+           }
+            if (par.className && (typeof par.className === 'string') ) {
+                const elClasses = par.className.split(' ');
+                for (let i = 0; i <= (classesToExclude.length -1); i++  ) {
+                    if (elClasses.includes(classesToExclude[i])) {
+                        return false;
+                    }
+                }                
+                if (elClasses.includes(classTarget) ) {
+                    return true;
+              }                  
+           }         
+           par = par.parentElement;         
+        }   
+        return false;
+    }
+
 
     formatDecimalHours(value) {
         let str = Math.trunc(value).toString().padStart(2, '0') + ':';
@@ -85,8 +117,47 @@ class Utils {
             }
         }
         return null;    
-   }
-   
+    }
+
+    getTimeStrToTime(str) {
+        if (str?.length >= 2) {
+            const hour = parseInt(str.substring(0, 2));
+            let minute = 0;
+            if (str.length >= 5) {
+                minute = parseInt(str.substring(3, 5));
+                if (minute > 60) {
+                    minute = 59;
+                }
+            }
+            return {hour: hour, minute: (minute ?? 0)};
+        }
+    }
+
+    
+
+    getWeekFromDate(dt)    {
+        let dtDay = dt;
+        if (typeof dt === 'string') {
+            dtDay = new Date(dt);
+        }                
+        if (dtDay.getDay() === 0) {
+            dtDay = this.addDays(dtDay, 6 * -1);
+        } else {
+            dtDay = this.addDays(dtDay, (dtDay.getDay()-1) * -1);
+        }         
+        const dtTo = this.addDays(dtDay, 6);
+        return [dtDay, dtTo];
+    }
+
+    getWeekFromDateStr(dt) {
+        const [dtStart, dtEnd] = this.getWeekFromDate(dt);
+        return this.getDateStr(dtStart) + ' to ' + this.getDateStr(dtEnd);
+    }
+
+    addDays(baseDate, days) {
+        return new Date(baseDate.getTime() + (86400000 * days));
+    }
+
    
     getDayName(dt) {
        let dtDay = dt;
@@ -94,6 +165,22 @@ class Utils {
            dtDay = new Date(dt);
        }
        return dtDay.toLocaleDateString('default', {weekday: 'long'});
+    }
+
+    getDayNumAndName(dt) {
+        let dtDay = dt;
+        if (typeof dt === 'string') {
+            dtDay = new Date(dt);
+        }
+        return  dtDay.getDate().toString().padStart(2, '0') + ' - ' + dtDay.toLocaleDateString('default', {weekday: 'short'});
+    }
+    
+    getHoursShort(dt) {
+        let dtDay = dt;
+        if (typeof dt === 'string') {
+            dtDay = new Date(dt);
+        }
+        return dtDay.getHours().toString().padStart(2, '0') + ':' + dtDay.getMinutes().toString().padStart(2, '0');
     }
 
     getDayMonth(dt) {
@@ -105,5 +192,6 @@ class Utils {
      }
 
 }
+
 
 export default new Utils();

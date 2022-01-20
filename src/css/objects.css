@@ -12,7 +12,7 @@
 }
 
 .jk-row-05{
-   column-gap: 0.5rem;
+   gap: 0.5rem;
 }
 
 
@@ -24,6 +24,13 @@
    column-gap: 0.5rem;
 }
 
+.jk-row-05-start{
+   display: flex;
+   flex-direction: row;
+   gap: 0.5rem;
+   justify-content: flex-start;
+}
+
 .max-width-18{
    max-width: 18rem;
 }
@@ -31,6 +38,35 @@
 .min-width-12{
    min-width: 12rem;
 }
+
+.min-width-10{
+   min-width: 10rem;
+}
+
+.min-width-20{
+   min-width: 20rem;
+}
+
+
+
+.min-width-8{
+   min-width: 8rem;
+}
+
+
+.min-width-6{
+   min-width: 6rem;
+}
+
+.back-color-4{
+   background-color: var(--primary-color-4);
+}
+
+
+.min-width-5{
+   min-width: 5rem;
+}
+
 
 .jk-column,
 .jk-column-05,
@@ -41,7 +77,51 @@
    align-items: center;
 }
 
+.jk-column-flex-1{
+   display: flex;
+   flex-direction: column;
+   justify-content: space-between;
+   flex: 1;
+}
 
+.flex-1{
+   display: flex;
+   flex: 1;
+}
+
+.margin-bt-65{
+   margin-bottom: 6.5rem;
+}
+
+.max-height-100-5625{
+   max-height: calc(100% - 5.625rem);
+}
+
+.pos-relative{
+   position: relative;
+}
+
+.just-center{
+   justify-content: center;
+}
+
+.just-end{
+   justify-content: flex-end;
+}
+
+
+.just-start{
+   justify-content: flex-start;
+}
+
+
+.align-end{
+   align-items: flex-end;
+}
+
+.width-4{
+   width: 4rem;
+}
 
 .jk-column-05{
    row-gap: 0.5rem;
@@ -55,10 +135,56 @@
    width: 100%;
 }
 
+.margin-side-15{
+   margin: 0 1.5rem;
+}
+
+.pad-1{
+   padding: 1rem;
+}
+
+.pad-05{
+   padding: 0.5rem;
+}
+
 .align-start{
    align-items: flex-start;
 }
 
 .line-through{
    text-decoration: line-through;
+}
+
+.card-primary{
+   padding: 1rem;
+   display: flex;
+   flex-direction: column;
+   gap: 0.5rem;
+   border: 1px solid var(--primary-color-2);
+}
+
+.list-scroll-margin-1,
+.list-scroll{
+   display: flex;
+   flex-direction: column;
+   overflow-y: auto;
+   overflow-x: hidden;
+   position: absolute;
+   top: 0;
+   bottom: 0;
+   left: 0;
+   right: 0;
+}
+
+
+.list-scroll-margin-1{
+   top: 1rem;
+   bottom: 1rem;
+   left: 1rem;
+   right: 1rem;
+
+}
+
+.flex-wrap{
+   flex-wrap: wrap;
 }

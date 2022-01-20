@@ -5,7 +5,7 @@ export default function CheckButton({
    caption
 }) {
 
-   return <button onClick={() => onToggle() } className={`btn-check${checked ? '-checked' : ''}`} >
+   return <button onClick={() => onToggle() } className={`btn-check${checked ? '-checked' : ''} min-width-10`} >
       {caption}
    </button>
 
