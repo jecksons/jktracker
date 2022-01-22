@@ -27,7 +27,7 @@ function PageTrack({pageSize, rowTotal, rowOffset, onSelectOffset}) {
          if (extraVal > 0) {
             arPages.push({
                value: (numPages * pageSize),
-               label: `${(numPages * pageSize + 1).toString()} to ${ (numPages * pageSize + extraVal) .toString()}`
+               label: `${(numPages * pageSize + 1).toString()} to ${(numPages * pageSize + extraVal).toString()}`
             });            
          }         
          let idxSelPage = arPages.findIndex((itm) => (itm.value >= rowOffset && itm.value <= (rowOffset + pageSize))  );
@@ -61,7 +61,7 @@ function PageTrack({pageSize, rowTotal, rowOffset, onSelectOffset}) {
       }      
    }, [onSelectOffset]);
 
-   return pages.length > 0 && <div className='page-track'>
+   return pages.length > 1 && <div className='page-track'>
       {
          selPage.prevPage ? 
             <button className={`btn-icon btn-no-shadow btn-pad-025`} onClick={() => handleChangeSel(selPage.prevPage)} > <MdArrowBackIosNew size={16} /> </button> : 
