@@ -47,7 +47,6 @@ export default function AppHeader({selOption}) {
 
    useEffect(() => {
       const body = document.querySelector('body');
-      console.log('changed the query selectro to ' + (showMenu ? 'hidden' : 'auto'));
       body.style.overflow = showMenu ? 'hidden' : 'auto';
    }, [showMenu]);
 
@@ -66,10 +65,7 @@ export default function AppHeader({selOption}) {
          <button className='btn-icon-menu' onClick={() => setShowMenu(p => !p)} > <RiMenu5Fill size={20}/> </button>
          <a href='/'><img className="logo" src={logo} alt="logo"  /></a>
       </section>
-      <LeftSideMenu  selOption={selOption} show={showMenu} onRequestClose={() => setShowMenu(false)}  />
-
-
-      
+      <LeftSideMenu  selOption={selOption} show={showMenu} onRequestClose={() => setShowMenu(false)}  />      
    </header>;
 
 }

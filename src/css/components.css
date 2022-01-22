@@ -3,7 +3,7 @@ button.btn-icon{
    border: 0;
    box-shadow: 0 0 2px 1px var(--primary-color-2);
    padding: 0.5rem;
-   color: var(--primary-color-2);
+   color: #ebebeb;
    border-radius: 20px;
    cursor: pointer;
    display: flex;
@@ -16,7 +16,6 @@ button.btn-icon:hover{
    background-color: var(--primary-color-text);
    color: var(--primary-color);
 }
-
 
 div.av-select__control--is-focused,
 div.av-select-error__control--is-focused{
@@ -80,8 +79,23 @@ div.parent-select-100 div.css-b62m3t-container{
 
 div.parent-select-form  div.av-select__control,
 div.parent-select-form  div.av-select-error__control{
-    border-bottom: 1px solid #ebebeb;
+    border-bottom: 1px solid var(--primary-color-2);
 }
+
+div.parent-select-color-3 div.av-select__control,
+div.parent-select-color-3 div.av-select-error__control {
+    background-color: var(--primary-color-35);
+    border: 1px solid var(--primary-color-35);
+    border-bottom: 1px solid var(--primary-color-2);
+}
+
+div.parent-select-color-3 div.av-select__control:hover,
+div.parent-select-color-3 div.av-select__control--is-focused:hover,
+div.parent-select-color-3 div.av-select-error__control:hover,
+div.parent-select-color-3 div.av-select-error__control--is-focused:hover{
+    border: 1px solid #ebebeb;    
+}
+
 
 
 button.btn-action,
@@ -320,6 +334,12 @@ button.btn-logout{
      padding: 0.25rem;
  }
 
+ button.btn-pad-04{
+    padding: 0.40625rem;
+}
+
+ 
+
 
  button.btn-plus{
      display: flex;
@@ -405,7 +425,10 @@ button.btn-logout{
  
  }
  
- 
+div.space-1-05{
+    width: 1.5rem;
+} 
+
  @media screen  and (max-width: 420px) {
     section.modal-content{
        width: calc(100vw - 2rem);

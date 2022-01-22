@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import {useNavigate} from 'react-router-dom';
 import api from "../../services/api";
 import utils from "../../services/utils";
 import AppHeader from "../controls/app-header";
@@ -8,10 +9,13 @@ import "react-datepicker/dist/react-datepicker.css";
 import './styles.css';
 import SurfaceLoading from "../controls/surface-loading";
 import NotFoundSurface from '../controls/not-found-surface';
+import { useSessionStorage } from "../../hooks/utils-hooks";
+
 
 
 function DayTracked({dayData}) {
    const [isExpanded, setIsExpanded] = useState(false);
+   const navigate = useNavigate();
 
    return (
       <li  className='card-day'>
@@ -28,7 +32,7 @@ function DayTracked({dayData}) {
       </div>
       <ul className={`task-items${isExpanded ? '' : '-collapsed'}`} >
          {
-            dayData.tasks.map((tsk) => <li className="card-day-task-item" key={tsk.id}>
+            dayData.tasks.map((tsk) => <li className="card-day-task-item" key={tsk.id} onClick={() => navigate(`/tasks/edit/${tsk.unique_code}`)} >
                   <p>{tsk.description}</p>
                   <h4>{utils.formatDecimalHours(tsk.hours)}</h4>
             </li>)
@@ -45,37 +49,48 @@ function DayTracked({dayData}) {
 
 export default function TimeTracking(props) {
 
-   const [weekDate, setWeekDate] = useState(new Date());
+   const [weekDate, setWeekDate] = useSessionStorage('tracking-seldate', new Date(), true);
    const [qrResult, setQrResult] = useState(null);
    const [loadingItems, setLoadingItems] = useState(false);
-
 
    useEffect(() => {
       document.title = 'Time Tracking - Jktracker';
    }, []);
 
-   useEffect(() => {
-      const cancelToken = api.getCancelToken();
+   const handleSearch = useCallback((searchDate) => {
       const fetchItm = async () => {
          try {
-            const ret = await api.get(`tasks/tracked-time/?weekFrom=${utils.getDateToURLParam(weekDate)}`);
+            const strFilter = searchDate ? `?weekFrom=${utils.getDateToURLParam(searchDate)}` : '';
+            const ret = await api.get(`tasks/tracked-time/${strFilter}`);
             let dtRes = ret.data;
             dtRes.period.fromDt = new Date(dtRes.period.from);
-            dtRes.period.toDt = new Date(dtRes.period.to);
+            dtRes.period.toDt = new Date(dtRes.period.to);            
             setQrResult(dtRes);
             setLoadingItems(false);
+            if (!searchDate) {
+               setWeekDate(dtRes.period.fromDt);
+            }
          }
          catch (err) {
             if (!api.isCancel(err)) {
                console.log(err);
             }
          }
-
       };
       setLoadingItems(true);
       fetchItm();
-      return () => cancelToken.cancel();
-   }, [weekDate]);
+   }, [setWeekDate]);
+
+   useEffect(() => {
+      let searchDate;
+      if (weekDate) {
+         if (utils.getDateStr(weekDate) !== utils.getDateStr(new Date())) {
+            searchDate = weekDate;
+         }
+      }
+      handleSearch(searchDate);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, []);
 
 
 
@@ -83,15 +98,18 @@ export default function TimeTracking(props) {
       <div className="parent-body-track" >
          <AppHeader selOption={'tracking'}  />         
          <div className="main-content-track">
-            <section className="jk-row-05 header-track">
+            <section className="jk-row-05 header-track flex-wrap">
                <h1>Time Tracking</h1>
                <div className="jk-row-05">
-                  <label>Selected week</label>
+                  <label className="lb-75">Selected week</label>
                   <DatePicker
                      id="week-select"
                      className='inp-form'
                      selected={weekDate}
-                     onChange={(dt) => setWeekDate(dt)}
+                     onChange={(dt) => {
+                        setWeekDate(dt);
+                        handleSearch(dt);
+                     }}
                   />
                </div>
             </section>

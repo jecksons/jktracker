@@ -19,3 +19,26 @@ export function useCurrUser() {
 
    return userInfo;
 }
+
+function getSessionStorageValue(key, defaultValue, isDate) {
+   let strItem = sessionStorage.getItem(key);
+   if (strItem) {      
+      if (isDate) {
+         strItem = strItem.replaceAll('"', '');
+         return new Date(strItem);
+      }
+      return JSON.parse(strItem) || defaultValue;
+   }
+   return defaultValue;
+}
+
+export function useSessionStorage(key, defaultValue, isDate) {
+   const [value, setValue] = useState(() => getSessionStorageValue(key, defaultValue, isDate));
+
+   useEffect(() => {
+      sessionStorage.setItem(key, JSON.stringify(value));
+   }, [key, value]);
+
+   return [value, setValue];
+
+}

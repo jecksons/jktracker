@@ -49,7 +49,7 @@ class Utils {
 
     formatFloatAsTime(value, includeSeconds = true) {      
         let hrs = Math.trunc(value * 24);
-        let mins = Math.abs(Math.round((value -(hrs / 24)) * 24 * 60));
+        let mins = Math.abs(Math.trunc((value -(hrs / 24)) * 24 * 60));
         if (mins === 60) {
             mins = 0;
             hrs += 1;

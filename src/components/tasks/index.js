@@ -15,6 +15,8 @@ import CheckButton from "../controls/check-button";
 import {MdOutlineDone, MdOutlineCancel} from 'react-icons/md';
 import {SuccessToast} from '../controls/toast';
 import NotFoundSurface from '../controls/not-found-surface';
+import PageTrack from "../controls/page-track";
+import {useSessionStorage} from '../../hooks/utils-hooks';
 
 const OpenedTaskOption = {value: 'O', label: 'Opened'};
 const FinishedTaskOption = {value: 'F', label: 'Finished'};
@@ -77,12 +79,24 @@ function ActiveTaskTimer({task, onStartTracking, onStopTracking}) {
 
    const [totalTime, setTotalTime] = useState('00:00:00');
    const [opened, setOpened] = useState(true);
+   const [dtFrom, setDtFrom] = useState(null);
+
+   useEffect(() => {
+      if (task && task.start_time_tracking) {
+         let dtStart = new Date(task.start_time_tracking);
+         if (dtStart.getTime() > (new Date()).getTime() ) {
+            dtStart = new Date();
+         }
+         setDtFrom(dtStart);
+      } else {
+         setDtFrom(null);
+      }
+   }, [task]);
 
    useEffect(() => {      
-      if (task && task.start_time_tracking) {         
-         const procTotalTime = () => {
-            const dtFrom = new Date(task.start_time_tracking);
-            const dtTo = new Date();                  
+      if (task && dtFrom) {         
+         const procTotalTime = () => {            
+            const dtTo = new Date();                              
             setTotalTime(
                   utils.formatFloatAsTime(
                      ((dtTo.getTime() -  dtFrom.getTime() ) / 1000 / 60 / 60 / 24)   
@@ -92,7 +106,7 @@ function ActiveTaskTimer({task, onStartTracking, onStopTracking}) {
          const inter = setInterval(procTotalTime, 1000);
          return () => clearInterval(inter);
       }  
-   }, [task]);
+   }, [task, dtFrom]);
 
 
    return task &&  (
@@ -125,11 +139,23 @@ function TimerTracking({taskId, startTime, onStartTracking, onStopTracking, time
 
    const [totalTime, setTotalTime] = useState('00:00:00');
    const [processingStartStop, setProcessingStartStop] = useState(false);
+   const [dtFrom, setDtFrom] = useState(null);
+   
+   useEffect(() => {
+      if (startTime) {
+         let dtStart = new Date(startTime);
+         if (dtStart.getTime() > (new Date()).getTime() ) {
+            dtStart = new Date();
+         }
+         setDtFrom(dtStart);
+      } else {
+         setDtFrom(null);
+      }
+   }, [startTime]);
 
    useEffect(() => {      
-      if (startTime) {         
+      if (dtFrom) {         
          const procTotalTime = () => {
-            const dtFrom = new Date(startTime);
             const dtTo = new Date();                  
             setTotalTime(
                   utils.formatFloatAsTime(
@@ -145,7 +171,7 @@ function TimerTracking({taskId, startTime, onStartTracking, onStopTracking, time
                timeToSum
                ));                     
       }
-   }, [startTime, timeToSum]);
+   }, [dtFrom, timeToSum]);
 
    return (
       <div className="jk-row-05">       
@@ -262,8 +288,9 @@ function TaskItem({task, onStartTracking, onStopTracking, onAddChild, showClosed
                      }
                   }
                }               
+               filter += '&offset=0&limit=999';
                const ret = await api.get(`/tasks/?${filter}`);
-               dispatchSubTasks({type: 'set', values: ret.data.results});
+               dispatchSubTasks({type: 'set', values: ret.data.tasks.results});
                setSubTasksLoad(SubTaskLoaded);
             }
             catch (err) {
@@ -361,7 +388,7 @@ function TaskItem({task, onStartTracking, onStopTracking, onAddChild, showClosed
       if (utils.hasClickedOnClass(e.target, 'task-item-content-mobile', ['BUTTON', 'A'], ['av-select__control', 'av-select__option'])) {
          navigate(`/tasks/edit/${task.unique_code}`);
       }      
-   }, [task.unique_code]);
+   }, [task.unique_code, navigate]);
 
    const renderMobileContent = () => {
       return (
@@ -439,16 +466,35 @@ function TaskItem({task, onStartTracking, onStopTracking, onAddChild, showClosed
 }
 
 
-export default function Home(props) {
+const TaskPageSize = 15;
 
+const DefaultTaskSortOption = {value: 0, label: 'Sort order'};
+
+const TaskSortOptions = [
+   DefaultTaskSortOption,
+   {value: 1, label: 'Description', sort_by: 'description', order_by: 'asc'},
+   {value: 2, label: 'Description (z - a)', sort_by: 'description', order_by: 'desc'},
+   {value: 3, label: 'Due date', sort_by: 'due_date', order_by: 'asc'},
+   {value: 4, label: 'Due date (z - a)', sort_by: 'due_date', order_by: 'desc'},
+   {value: 5, label: 'Estimated time', sort_by: 'estimated_time', order_by: 'asc'},
+   {value: 6, label: 'Estimated time (z - a)', sort_by: 'estimated_time', order_by: 'desc'},
+   {value: 7, label: 'Priority', sort_by: 'priority', order_by: 'asc'},
+   {value: 8, label: 'Priority (z - a)', sort_by: 'priority', order_by: 'desc'}
+]
+
+export default function Home(props) {
+   
    const [tasks, dispatchTasks] = useReducer(reducerTasks, []);
-   const [statusFilter, setStatusFilter] = useState(OpenedTaskOption);
+   const [statusFilter, setStatusFilter] = useSessionStorage('task-statusFilter', OpenedTaskOption);
    const [keySearch, setKeySearch] = useState(0);
    const [addingNew, setAddingNew] = useState(false);
    const [parentTaskAdding, setParentTaskAdding] = useState(null);
    const [loadingTasks, setLoadingTasks] = useState(true);
    const [activeTask, setActiveTask] = useState(null);
    const [showClosedChilds, setShowClosedChilds] = useState(false);
+   const [searchMetadata, setSearchMetadata] = useState(null);
+   const [offsetSearch, setOffsetSearch] = useSessionStorage('task-offset', 0);
+   const [sortOption, setSortOption] = useSessionStorage('task-sortOption', DefaultTaskSortOption);
    
    useEffect(() => {
       document.title = 'Tasks - JkTracker';
@@ -518,16 +564,20 @@ export default function Home(props) {
    }, [])
 
    useEffect(() => {
-      let strFilter = '';
+      let strFilter = `?offset=${offsetSearch}&limit=${TaskPageSize}`;
       if (statusFilter && statusFilter.value !== '-') {
-         strFilter = '?status=' + statusFilter.value;
+         strFilter += '&status=' + statusFilter.value;
       }      
+      if (sortOption && sortOption.sort_by) {
+         strFilter += `&sort_by=${sortOption.sort_by}&order_by=${sortOption.order_by}`;
+      }
       setLoadingTasks(true);
       const cancelToken = api.getCancelToken();
       const fetchTask = async () =>  {
          try {
             const ret = await api.get('/tasks/' + strFilter);
-            dispatchTasks({type: 'set', values: ret.data.results});
+            dispatchTasks({type: 'set', values: ret.data.tasks.results});
+            setSearchMetadata(ret.data.tasks.metadata);
             setActiveTask(ret.data.activeTask ?? null);
             setLoadingTasks(false);
          }
@@ -540,7 +590,7 @@ export default function Home(props) {
       fetchTask();      
       return () => cancelToken.cancel();
 
-   }, [statusFilter, keySearch]);
+   }, [statusFilter, keySearch, offsetSearch, sortOption]);
 
 
    const onCloseAddTask = useCallback((newTask) => {
@@ -588,7 +638,10 @@ export default function Home(props) {
                         options={TaskStatusOptionsFilter}
                         value={statusFilter}
                         classNamePrefix='av-select'
-                        onChange={(itm) => setStatusFilter(itm)}
+                        onChange={(itm) => {
+                           setStatusFilter(itm);
+                           setOffsetSearch(0);
+                        }}
                      />
                   </div>
                   <button className="btn-action min-width-8" onClick={() => onRequestNewTask()}>New task</button>
@@ -596,40 +649,59 @@ export default function Home(props) {
             </section>
             <section className="tasks"> 
                {
-                  loadingTasks ? 
+                  loadingTasks && !searchMetadata ? 
                      <div className="task-loading">
                         <SurfaceLoading />
                      </div> : 
                      <>
-                        <div className="jk-row-05 tasks-header">
-                           <label className="header-description">Description</label>
-                           <div className="detail-items ">
-                              <label>Status</label>
-                              <div> </div>
-                              <label>Due Date</label>
-                              <label>Priority</label>
-                              <label>Estimated time</label>
-                              <label>Tracked time</label>
-                              <label>Current</label>
+                        <div className="jk-column flex-1">
+                           <div className="task-header-options parent-select-form parent-select-color-3" > 
+                              <div className='min-width-12'>
+                                 <div className='parent-select-100'>
+                                    <Select 
+                                       options={TaskSortOptions}
+                                       defaultValue={sortOption}
+                                       onChange={(opt) => setSortOption(opt)}
+                                       classNamePrefix='av-select'
+                                    />
+                                 </div>
+                              </div>                              
+                              <PageTrack rowOffset={searchMetadata.offset}  rowTotal={searchMetadata.total} pageSize={TaskPageSize} onSelectOffset={(newValue) => setOffsetSearch(newValue)} />
                            </div>
-                        </div>
-                        {
-                           tasks.length > 0 ? 
-                              (
-                                 <ul key={keySearch} className="tasks">
-                                    {tasks.map((itm) => <TaskItem 
-                                       key={itm.id + (itm.updKey ?? 0) } 
-                                       onStartTracking={onStartTracking}
-                                       onStopTracking={onStopTracking}
-                                       onAddChild={onRequestNewTask}
-                                       onUpdateTask={onUpdateTask}                              
-                                       showClosedChilds={showClosedChilds}
-                                       task={itm} 
-                                       /> )}
-                                 </ul>
-                              ) : 
-                              <NotFoundSurface title="Still aren't tasks created." message="Try to create a new task." />                                                         
-                        }
+                           <div className="jk-row-05 tasks-header">                        
+                              <label className="header-description">Description</label>
+                              <div className="detail-items ">
+                                 <label>Status</label>
+                                 <div> </div>
+                                 <label>Due Date</label>
+                                 <label>Priority</label>
+                                 <label>Estimated time</label>
+                                 <label>Tracked time</label>
+                                 <label>Current</label>
+                              </div>
+                           </div>
+                           {
+                              loadingTasks ? 
+                                 <SurfaceLoading /> : 
+                                 (
+                                    tasks.length > 0 ? 
+                                    (
+                                       <ul key={keySearch} className="jk-column width-100 flex-1 just-start">
+                                          {tasks.map((itm) => <TaskItem 
+                                             key={itm.id + (itm.updKey ?? 0) } 
+                                             onStartTracking={onStartTracking}
+                                             onStopTracking={onStopTracking}
+                                             onAddChild={onRequestNewTask}
+                                             onUpdateTask={onUpdateTask}                              
+                                             showClosedChilds={showClosedChilds}
+                                             task={itm} 
+                                             /> )}                                    
+                                       </ul>
+                                    ) : 
+                                    <NotFoundSurface title="Still aren't tasks created." message="Try to create a new task." />      
+                                 )                                                   
+                           }
+                        </div>                       
                         
                      </>
                }               

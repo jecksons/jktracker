@@ -18,6 +18,7 @@ import {useForm, Controller} from 'react-hook-form';
 import ErrorForm from "../controls/error-form";
 import DatePicker from 'react-datepicker';
 import Select from "react-select";
+import AnimatedTick from "../controls/animated-tick";
 
 const LS_LOADING = 0;
 const LS_LOADED = 1;
@@ -140,6 +141,7 @@ function TaskEditContainer({task, onRefreshTasks}) {
    const [saving, setSaving] = useState(false);
    const [originalTaskData, setOriginalTaskData] = useState(null);
    const [deleting, setDeleting] = useState(false);  
+   const [showSuccess, setShowSuccesss] = useState(false);
    
 
    const setFormData = useCallback((newData) => {
@@ -164,6 +166,7 @@ function TaskEditContainer({task, onRefreshTasks}) {
             setFormData(tskData);
             setDeleting(false);
             setSaving(false);
+            setShowSuccesss(false);
          } catch (err) {
             if (!api.isCancel(err)) {
                setLoadingTask(LS_ERROR);
@@ -208,6 +211,10 @@ function TaskEditContainer({task, onRefreshTasks}) {
             if (task.id === ret.data.id) {
                setSaving(false);
                setFormData(ret.data);
+               setShowSuccesss(true);
+               setTimeout(() => {
+                  setShowSuccesss(false);
+               }, 1500);
                onRefreshTasks();
             }
          })
@@ -275,9 +282,9 @@ function TaskEditContainer({task, onRefreshTasks}) {
                <ErrorForm  errorMessage={errors.priority} fieldName='Priority'  />
             </div>            
             <div className="tsk-form-buttons">  
-               <button type="submit" className="btn-action min-width-8">{saving ? <SurfaceLoading size={16} onBackground={true} /> : 'Save'}</button>
+               <button type="submit" className={`btn-action min-width-8 `}>{saving ? <SurfaceLoading size={16} onBackground={true} /> : (showSuccess ? <AnimatedTick /> : 'Save') }</button>               
                <button className="btn-link-nopad"  id="btn-del-form" onClick={deleting ? null : handleDelete}>{deleting ? <SurfaceLoading size={16} /> : 'Delete'}</button>
-            </div>
+            </div>                        
             {errorMessage && <ErrorSurface message={errorMessage} /> } 
          </div>
          <div className="jk-column-05 just-start">
@@ -291,7 +298,8 @@ function TaskEditContainer({task, onRefreshTasks}) {
       </form>
    }
 
-   const handleDelete = useCallback(() => {
+   const handleDelete = useCallback((e) => {
+      e.preventDefault();
       setDeleting(true);
       api.delete(`/tasks/id/${task.id}`)
       .then((ret) => {
@@ -383,13 +391,13 @@ function TaskSummary({summaryData}) {
          <label >{utils.formatFloatAsTime((summaryData.estimated ?? 0) / 24, false)} </label>
       </div>
       {
-         (summaryData.estimated && summaryData.tracked) &&
+         (summaryData.estimated > 0 && summaryData.tracked) &&
          (
             <div className="jk-row-05 width-100">
                <label className="lb-75" >Difference:</label>
                <label >{utils.formatFloatAsTime(summaryData.tracked - ((summaryData.estimated ?? 0) / 24), false)} ({ Math.round((summaryData.tracked / ((summaryData.estimated ?? 0) / 24)) * 100)}% from estimated) </label>
             </div>
-         )
+         ) 
       }      
    </section>
 }
