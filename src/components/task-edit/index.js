@@ -249,6 +249,7 @@ function TaskEditContainer({task, onRefreshTasks}) {
                         render={ ({field}) =>  
                         <Select 
                            options={TaskStatusOptions} 
+                           isSearchable={false}
                            {...field}                                                    
                            classNamePrefix='av-select'  
                            />                                          
@@ -513,6 +514,7 @@ export default function TaskEdit(props) {
                                              <Select
                                                 classNamePrefix='av-select'   
                                                 options={taskData.results}                                                
+                                                isSearchable={false}
                                                 key={keySelectTask}
                                                 defaultValue={selTask}
                                                 onChange={(opt) => setSelTaskId(opt.value)}

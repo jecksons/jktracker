@@ -359,6 +359,7 @@ function TaskItem({task, onStartTracking, onStopTracking, onAddChild, showClosed
                   <Select 
                      options={TaskStatusOptions}
                      value={taskStatus}
+                     isSearchable={false}
                      classNamePrefix='av-select'
                      onChange={(itm) => {
                         setTaskStatus(itm);
@@ -401,6 +402,7 @@ function TaskItem({task, onStartTracking, onStopTracking, onAddChild, showClosed
                   <Select 
                      options={TaskStatusOptionsFilter}
                      value={taskStatus}
+                     isSearchable={false}
                      classNamePrefix='av-select'
                      onChange={(itm) => {
                         setTaskStatus(itm);
@@ -637,6 +639,7 @@ export default function Home(props) {
                      <Select 
                         options={TaskStatusOptionsFilter}
                         value={statusFilter}
+                        isSearchable={false}
                         classNamePrefix='av-select'
                         onChange={(itm) => {
                            setStatusFilter(itm);
@@ -660,6 +663,7 @@ export default function Home(props) {
                                  <div className='parent-select-100'>
                                     <Select 
                                        options={TaskSortOptions}
+                                       isSearchable={false}
                                        defaultValue={sortOption}
                                        onChange={(opt) => setSortOption(opt)}
                                        classNamePrefix='av-select'
