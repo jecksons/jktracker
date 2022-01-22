@@ -104,7 +104,7 @@ div.left-side-hamb-overlay{
 section.left-side-hamb,
 section.left-side-hamb-show{
    position: fixed;
-   display: flex;
+   display: none;
    flex-direction: column;
    width: min(18rem, 90vw);
    top: 4.375rem;
@@ -141,6 +141,11 @@ section.left-side-hamb-show{
    section.header-mob::after{
       content: " ";
       width: 2.25rem;
+   }
+
+   section.left-side-hamb,
+   section.left-side-hamb-show{
+      display: flex;   
    }
    
    
