@@ -66,6 +66,7 @@ function NewTask({parentTask, show, onCloseModal}) {
                   className='inp-form task-description'  
                   value={description} 
                   autoFocus={true}
+                  maxLength={500}
                   placeholder='Task description'
                   onChange={(e) => setDescription(e.target.value)} />
             </div>

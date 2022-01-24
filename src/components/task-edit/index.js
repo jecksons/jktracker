@@ -236,7 +236,7 @@ function TaskEditContainer({task, onRefreshTasks}) {
          <div className="jk-column-1 align-start flex-1">
             <div className="jk-column-05 align-start width-100">
                <label className="lb-75">Description</label>
-               <input className={`inp-form inp-description ${errors.description ? 'inp-error' : ''}`}  {...register('description', {required: true})} />               
+               <input maxLength={500} className={`inp-form inp-description ${errors.description ? 'inp-error' : ''}`}  {...register('description', {required: true})} />               
                <ErrorForm  error={errors.description} fieldName='Description'  />
             </div>
             <div className="jk-column-05 align-start width-100">
@@ -329,7 +329,7 @@ function TaskEditContainer({task, onRefreshTasks}) {
 
       <div className="header-tsk-edit">
          <div className="jk-column-1 align-start">
-            <label className="title-tsk-edit">{task.description}</label>
+            <label className="title-tsk-edit">{task.description_short}</label>
             <label className="lb-75">{TaskStatusObj[task.id_task_status]}</label>
          </div>
          <div className="jk-row-05">
@@ -370,7 +370,7 @@ function TaskListItem({task, onClick, isSelected}) {
          className={`card-primary card-task-item${task.id_task_parent ? '-child' : ''}  ${isSelected ? 'card-task-sel' +  (task.id_task_parent ? '-child' : '')   : ''} `}  
          onClick={onClickItem} >
       <div className="jk-row-05 width-100">
-         <label className="lb-card-title">{task.description}</label>
+         <label className="lb-card-title">{task.description_short}</label>
          <label className="task-hour">{utils.formatFloatAsTime(task.tracked_time, false)} </label>
       </div>
       <div className="jk-row-05 width-100">
@@ -455,7 +455,7 @@ export default function TaskEdit(props) {
                }
                return ret.data.results[0].id;                        
             });
-            ret.data.results = ret.data.results.map((itm) => ({...itm, value: itm.id, label: itm.description}));
+            ret.data.results = ret.data.results.map((itm) => ({...itm, value: itm.id, label: itm.description_short}));
             setTaskData(ret.data);            
             setLoadState(LS_LOADED);            
          } catch (err) {

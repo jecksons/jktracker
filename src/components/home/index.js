@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from 'react-router-dom';
 import logo from '../images/logo.png';
 import googleImg from '../images/google.svg';
-import fbImg from '../images/fb.png';
 import clockImg from '../images/clock.png';
 import clockMainImg from '../images/clock-main.png';
 import {Link } from 'react-scroll';
@@ -11,7 +10,7 @@ import './styles.css';
 import SurfaceLoading from "../controls/surface-loading";
 import AuthService from "../../services/auth-service";
 import Utils from '../../services/utils';
-import GoogleLogin, { useGoogleLogin, useGoogleLogout } from 'react-google-login';
+import { useGoogleLogin} from 'react-google-login';
 import config from "../../services/config";
 import { useCurrUser } from "../../hooks/utils-hooks";
 import LogoutButton from "../controls/logout-button";
@@ -38,13 +37,13 @@ function LoginContent(props) {
             setLoadingGoogle(false);
          } );            
       }
-   }, []);
+   }, [navigate]);
    
    const onErrorGoogle = useCallback((res) => {
       console.log(res);
    }, []);
    
-   const  {signIn, loaded} = useGoogleLogin({onSuccess: onSuccessGoogle, onFailure: onErrorGoogle,  clientId: config.googleClientId, cookiePolicy: 'single_host_origin' });
+   const  {signIn} = useGoogleLogin({onSuccess: onSuccessGoogle, onFailure: onErrorGoogle,  clientId: config.googleClientId, cookiePolicy: 'single_host_origin' });
    
 
    const handleDemoClick = () => {
@@ -73,7 +72,7 @@ function LoginContent(props) {
                   loadingGoogle ? 
                      <SurfaceLoading size={16} onBackground={true}/> : 
                      <>
-                        <img src={googleImg} className="social-icon" />Continue with Google
+                        <img src={googleImg} className="social-icon" alt="Google login" />Continue with Google
                      </>                     
                }               
                </button>
@@ -94,7 +93,7 @@ function InfoDev() {
    return (
       <section className='info-dev' >
          <p>Developed by <a href="https://jeckson.me" className="link-white">Jeckson Schwengber</a></p>
-         <img src={logo} className="small-logo" />
+         <img src={logo} className="small-logo" alt="logo" />
       </section>           
    );
 }
@@ -105,7 +104,7 @@ function LogoTitle({onSetShowLogin, showingLogin}) {
    return (
       <div className='parent-logo'>
          <div className="jk-row-top ">
-            <img src={logo} className="main-logo"/>
+            <img src={logo} className="main-logo" alt="main logo"/>
             <h1 className="logo-title">JKTRACKER</h1>
          </div>
          {
@@ -136,7 +135,8 @@ export default function Home(props) {
                refLogin.current.scrollIntoView();
             }, 100);            
          }
-      }     
+      }           
+      // eslint-disable-next-line react-hooks/exhaustive-deps
    }, []);
 
 
@@ -150,7 +150,7 @@ export default function Home(props) {
                   <p>You can easily manage your efforts and 
                      worked time efficiently, improving budget estimates and detecting weaknesses from estimated time to real time.</p>
                </article>
-               <img src={clockMainImg} className="img-clock-main" />
+               <img src={clockMainImg} className="img-clock-main" alt="clock" />
             </section>         
             <article className="info-quote">
                <strong>"What gets measured gets managed"</strong>
@@ -165,7 +165,7 @@ export default function Home(props) {
                <LoginContent />
             </section>
             <InfoDev />
-            <img className="clock-img"  src={clockImg} />    
+            <img className="clock-img"  src={clockImg} alt="sec. clock" />    
          </div>
          {!currUser && 
             <section ref={refLogin} className="login-mobile" id="login-action">

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useReducer, useState } from "react";
+import { useCallback, useEffect, useReducer, useState, useRef } from "react";
 import {Link, useNavigate} from 'react-router-dom';
 import Select from "react-select";
 import {BsChevronDown,BsChevronRight, BsCaretRightFill, BsCheck2 } from 'react-icons/bs';
@@ -80,6 +80,7 @@ function ActiveTaskTimer({task, onStartTracking, onStopTracking}) {
    const [totalTime, setTotalTime] = useState('00:00:00');
    const [opened, setOpened] = useState(true);
    const [dtFrom, setDtFrom] = useState(null);
+   const [processingStartStop, setProcessingStartStop] = useState(false);
 
    useEffect(() => {
       if (task && task.start_time_tracking) {
@@ -120,14 +121,25 @@ function ActiveTaskTimer({task, onStartTracking, onStopTracking}) {
          <div className={`sticky-timer-content${opened ? '' : '-hide'}`}>
             <div className="jk-row-05">
                <label className="sticky-curr-time">{totalTime}</label>
-               <button className={`btn-itm-${task.start_time_tracking ? 'stop' : 'start'}`} onClick={() => {
-                  if (task.start_time_tracking) {
-                     onStopTracking();
-                  }
-                  else {
-                     onStartTracking(task.id);
-                  }            
-               }} >{task.start_time_tracking ? <TiMediaStop size={16} /> : <BsCaretRightFill size={16} /> }</button>    
+               {
+                  processingStartStop ? 
+                  (
+                     <div>
+                        <SurfaceLoading size={24}/>
+                     </div>   
+                  ) : 
+                  <button className={`btn-itm-${task.start_time_tracking ? 'stop' : 'start'}`} onClick={() => {
+                     setProcessingStartStop(true);
+                     if (task.start_time_tracking) {                        
+                        onStopTracking()
+                        .then((ret) => setProcessingStartStop(false));
+                     }
+                     else {
+                        onStartTracking(task.id)
+                        .then((ret) => setProcessingStartStop(false));
+                     }            
+                  }} >{task.start_time_tracking ? <TiMediaStop size={16} /> : <BsCaretRightFill size={16} /> }</button>    
+               }               
             </div>
             <p className="sticky-description">{task.description}</p>
          </div>
@@ -497,12 +509,27 @@ export default function Home(props) {
    const [searchMetadata, setSearchMetadata] = useState(null);
    const [offsetSearch, setOffsetSearch] = useSessionStorage('task-offset', 0);
    const [sortOption, setSortOption] = useSessionStorage('task-sortOption', DefaultTaskSortOption);
+   var lastPageChange = useRef(new Date());
+
+   useEffect(() => {
+      if (!addingNew) {
+         const intervalUpdate = setInterval(() => {
+            const dtCurr = new Date();         
+            if (((dtCurr.getTime() - lastPageChange.current.getTime()) / 1000) >= 90) {
+               setKeySearch(p => p+1);
+            }            
+         }, 20000);
+         return () => clearInterval(intervalUpdate);
+      }         
+   }, [addingNew]);
+  
    
    useEffect(() => {
       document.title = 'Tasks - JkTracker';
    }, []);
 
    const onStopTracking = useCallback(async () => {
+      lastPageChange.current = new Date();
       const ret = await api.post('tasks/track/', {action: 'F'}); 
       if (ret.data.previousTask) {
          let itmUpdate = ret.data.previousTask;
@@ -515,6 +542,7 @@ export default function Home(props) {
    }, []);
 
    const onStartTracking = useCallback(async (taskId) => {
+      lastPageChange.current = new Date();
       const ret = await api.post('tasks/track/', {action: 'S', id_task: taskId});
       let updTasks = [];         
       const currTask = ret.data.currentTask;
@@ -590,8 +618,8 @@ export default function Home(props) {
          }      
       }
       fetchTask();      
+      lastPageChange.current = new Date();
       return () => cancelToken.cancel();
-
    }, [statusFilter, keySearch, offsetSearch, sortOption]);
 
 

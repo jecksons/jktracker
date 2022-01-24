@@ -238,7 +238,12 @@ button#btn-del-form{
    section.task-sect-mob{
       display: flex;
    }
-   
+     
+}
 
-   
+@media only screen and (max-height: 700px) {
+   section.tsk-edit-body{
+      max-height: none;
+      
+   }
 }

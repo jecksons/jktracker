@@ -53,11 +53,14 @@ section.login-parent-show{
    border: 2px solid var(--primary-color-2);
    display: flex;
    flex-direction: column;
-   row-gap: 2rem;
-   transform: translateX(100%);
+   row-gap: 2rem;   
    transition: transform 0.5s ease-out;
 }
 
+section.login-parent{
+   transform: translateX(100%);   
+}
+ 
 section.login-parent-show{
    transform: translateX(0);
 }
@@ -78,7 +81,6 @@ section.main-info p{
    font-size: 1.25rem;
    font-weight: lighter;
    line-height: 1.25;
-
 }
 
 
@@ -317,6 +319,22 @@ div.actions-title-home{
    a#my-tasks-home{
       width: 12rem;
       align-self: center;
+   }
+
+}
+
+@media only screen and (max-width: 600px) {
+   
+   section.main-info h2{
+      font-size: 2rem;
+   }
+
+   section.main-info p{
+      font-size: 1rem;
+   }
+
+   article.info-quote strong{
+      font-size: 1.5rem;
    }
 
 
