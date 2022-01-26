@@ -590,6 +590,7 @@ export default function Home(props) {
    }, []);
 
    const onUpdateTask = useCallback((updatedTask) => {
+      lastPageChange.current = new Date();
       dispatchTasks({type: 'update', values: [updatedTask]});
    }, [])
 
@@ -626,6 +627,7 @@ export default function Home(props) {
    const onCloseAddTask = useCallback((newTask) => {
       setAddingNew(false);
       if (newTask) {         
+         lastPageChange.current = new Date();
          if (statusFilter?.value === OpenedTaskOption.value) {
             if (newTask.id_task_parent)  {
                dispatchTasks({

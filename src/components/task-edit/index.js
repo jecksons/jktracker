@@ -375,7 +375,7 @@ function TaskListItem({task, onClick, isSelected}) {
       </div>
       <div className="jk-row-05 width-100">
          <label className="lb-75">{TaskStatusObj[task.id_task_status]}</label>
-         {task.estimated_time && <label className="lb-75">Estimated: {utils.formatFloatAsTime(task.estimated_time, false)} </label>} 
+         {task.estimated_time && <label className="lb-75">Estimated: {utils.formatFloatAsTime(task.estimated_time / 24, false)} </label>} 
       </div>
    </li>
 
